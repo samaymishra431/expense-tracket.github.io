@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daily Visit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        main.container-fluid {
+            flex: 1 0 auto;
+        }
+
+        /* Tab content */
+        .tab-content {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Table styling */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            /* Added border-radius for the whole table */
+            border-radius: 0.375rem;
+            overflow: hidden;
+            /* Ensures inner content respects border-radius */
+            border: 1px solid #dee2e6;
+        }
+
+        table.data-table thead tr {
+            background-color: #e9f2ff;
+            font-weight: 600;
+            color: #212529;
+            user-select: none;
+        }
+
+        table.data-table thead th,
+        table.data-table tbody td,
+        table.data-table tfoot td {
+            border: 1px solid #dee2e6;
+            padding: 0.45rem 0.8rem;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            color: #212529;
+        }
+
+        table.data-table thead th {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        /* Top corners for the table header */
+        table.data-table thead tr:first-child th:first-child {
+            border-top-left-radius: 0.375rem;
+        }
+
+        table.data-table thead tr:first-child th:last-child {
+            border-top-right-radius: 0.375rem;
+        }
+
+
+        table.data-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table.data-table tbody tr td a {
+            text-decoration: none;
+            color: #0d6efd;
+            transition: color 0.2s ease-in-out;
+        }
+
+        table.data-table tbody tr td a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+
+        /* Footer total row (no longer used for pagination but kept for general footer styling) */
+        table.data-table tfoot tr.total-row {
+            background-color: #e9f2ff;
+            font-weight: 700;
+            color: #0d6efd;
+            user-select: none;
+        }
+
+        /* Pagination row in table footer */
+        table.data-table tfoot tr.pagination-row td {
+            background-color: white;
+            /* Light background for pagination row */
+            border-top: 1px solid #dee2e6;
+            padding: 0.75rem;
+            text-align: right;
+            /* Align pagination to right */
+            /* Bottom corners for the table footer */
+            border-bottom-left-radius: 0.375rem;
+            border-bottom-right-radius: 0.375rem;
+        }
+
+
+        /* Bottom footer */
+        footer.footer {
+            font-size: 0.85rem;
+            color: #868e96;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #dee2e6;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: static;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+            margin-top: auto;
+            /* Pushes footer to the bottom */
+        }
+
+        footer.footer a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer.footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Buttons on bottom right */
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-round {
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-home {
+            background-color: #0d6efd;
+            border: none;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #0d6efd;
+            border: none;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .stats-cards {
+                gap: 0.7rem;
+            }
+
+            .stat-card {
+                min-width: 40%;
+                font-size: 0.9rem;
+            }
+
+            .stat-content {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stat-card {
+                min-width: 100%;
+                justify-content: start;
+                gap: 0.5rem;
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                min-width: 24px;
+            }
+        }
+
+        /* Styles for filter card */
+        .filter-card {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            /* Space below the filter card */
+        }
+
+        /* Pagination styling within the table footer */
+        .pagination-in-table {
+            display: inline-flex;
+            /* Use inline-flex for horizontal alignment of pagination items */
+            margin-bottom: 0;
+            /* Remove default ul margin */
+        }
+
+        .pagination-in-table .page-link {
+            color: #0d6efd;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            margin: 0 2px;
+            /* Spacing between buttons */
+            padding: 0.375rem 0.75rem;
+            /* Bootstrap default padding */
+        }
+
+        .pagination-in-table .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+        }
+
+        .pagination-in-table .page-link:hover {
+            background-color: #e9f2ff;
+            color: #0d6efd;
+        }
+
+        .modal-header {
+            background-color: #e0f2fe;
+            border-bottom: 1px solid #bfdbfe;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-white border-bottom">
+        <ul class="nav nav-tabs container-fluid px-0" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="dashboard.html" type="button">Dashboard</a>
+            </li>
+            <li class="nav-item dropdown" role="presentation">
+                <a class="nav-link dropdown-toggle" id="masterDropdown" data-bs-toggle="dropdown"
+                    aria-expanded="false" href="#" role="button">
+                    Master
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="masterDropdown">
+                    <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
+                    <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
+                    <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                    <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
+                    
+                    
+                </ul>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="tour-management.html" type="button">Tour Management</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" href="daily-visit.html" type="button">Visits</a>
+            </li>
+          
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="expenses.html" type="button">Expenses</a>
+            </li>
+        </ul>
+    </nav>
+    <main class="container-fluid my-3 px-2">
+        <div class="filter-card">
+            <h6 class="mb-3">Filter Daily Visits</h6>
+            <div class="row g-3">
+                <div class="col-md-2 col-sm-6">
+                    <label for="filterVisitId" class="form-label visually-hidden">Visit ID</label>
+                    <input type="text" class="form-control" id="filterVisitId" placeholder="Visit ID">
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <label for="filterTourId" class="form-label visually-hidden">Tour ID</label>
+                    <input type="text" class="form-control" id="filterTourId" placeholder="Tour ID">
+                </div>
+                
+                <div class="col-md-2 col-sm-6">
+                    <label for="filterLocationVisited" class="form-label visually-hidden">Location Visited</label>
+                    <input type="text" class="form-control" id="filterLocationVisited" placeholder="Location Visited">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label for="filterStartDate" class="form-label visually-hidden">Start Date</label>
+                    <input type="date" class="form-control" id="filterStartDate" placeholder="Start Date">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label for="filterEndDate" class="form-label visually-hidden">End Date</label>
+                    <input type="date" class="form-control" id="filterEndDate" placeholder="End Date">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center px-3 py-2"
+            style="background-color: #e0f2fe; border: 1px solid #dee2e6; border-bottom: 1px solid #bfdbfe; border-radius: 0.375rem 0.375rem 0 0;">
+            <h5 class="mb-0">Daily Visit Records</h5>
+            <div class="d-flex">
+                <button class="btn btn-success btn-sm me-2" id="exportExcelBtn" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Export to Excel">
+                    <i class="fas fa-file-excel"></i>
+                </button>
+                <button class="btn btn-danger btn-sm me-2" id="exportPdfBtn" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Export to PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#dailyVisitModal"
+                    title="Add New Daily Visit">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive" style="margin-top: 0;">
+            <table class="data-table table table-striped table-bordered align-middle mb-0" id="dailyVisitTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Visit ID</th>
+                        <th scope="col">Tour ID</th>
+                        <th scope="col">Start Date</th>
+                        <th scope="col">End Date</th>
+                        <th scope="col">Location Visited</th>
+                        <th scope="col">Purpose/Activity</th>
+                        <th scope="col">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DV001</td>
+                        <td>T001</td>
+                        <td>2024-07-01</td>
+                        <td>2024-07-01</td>
+                        <td>Eiffel Tower</td>
+                        <td>Siteseeing, Photography</td>
+                        <td>Visited early morning, less crowded.</td>
+                    </tr>
+                    <tr>
+                        <td>DV002</td>
+                        <td>T001</td>
+                        <td>2024-07-02</td>
+                        <td>2024-07-02</td>
+                        <td>Louvre Museum</td>
+                        <td>Art appreciation, Mona Lisa viewing</td>
+                        <td>Spent 4 hours, very impressive collection.</td>
+                    </tr>
+                    <tr>
+                        <td>DV003</td>
+                        <td>T002</td>
+                        <td>2024-07-10</td>
+                        <td>2024-07-10</td>
+                        <td>Shibuya Crossing</td>
+                        <td>Experience city bustle, shopping</td>
+                        <td>Extremely busy, vibrant atmosphere.</td>
+                    </tr>
+                    <tr>
+                        <td>DV004</td>
+                        <td>T002</td>
+                        <td>2024-07-11</td>
+                        <td>2024-07-11</td>
+                        <td>Imperial Palace</td>
+                        <td>Historical tour, gardens</td>
+                        <td>Peaceful and beautiful, learned about Japanese history.</td>
+                    </tr>
+                    <tr>
+                        <td>DV005</td>
+                        <td>T004</td>
+                        <td>2024-08-20</td>
+                        <td>2024-08-20</td>
+                        <td>Sydney Opera House</td>
+                        <td>Architectural tour, harbor views</td>
+                        <td>Iconic landmark, great photo opportunities.</td>
+                    </tr>
+                    <tr>
+                        <td>DV006</td>
+                        <td>T004</td>
+                        <td>2024-08-21</td>
+                        <td>2024-08-21</td>
+                        <td>Bondi Beach</td>
+                        <td>Relaxation, surfing lessons</td>
+                        <td>Sunny day, enjoyed the waves.</td>
+                    </tr>
+                    <tr>
+                        <td>DV007</td>
+                        <td>T005</td>
+                        <td>2024-09-01</td>
+                        <td>2024-09-01</td>
+                        <td>Colosseum</td>
+                        <td>Ancient history, gladiatorial arena</td>
+                        <td>Fascinating ruins, very hot day.</td>
+                    </tr>
+                    <tr>
+                        <td>DV008</td>
+                        <td>T005</td>
+                        <td>2024-09-02</td>
+                        <td>2024-09-02</td>
+                        <td>Vatican City</td>
+                        <td>Religious sites, St. Peter's Basilica</td>
+                        <td>Long queues but worth the wait.</td>
+                    </tr>
+                    <tr>
+                        <td>DV009</td>
+                        <td>T007</td>
+                        <td>2024-10-01</td>
+                        <td>2024-10-01</td>
+                        <td>Burj Khalifa</td>
+                        <td>Observation deck, city views</td>
+                        <td>Stunning panoramic views from the top.</td>
+                    </tr>
+                    <tr>
+                        <td>DV010</td>
+                        <td>T007</td>
+                        <td>2024-10-02</td>
+                        <td>2024-10-02</td>
+                        <td>The Dubai Mall</td>
+                        <td>Shopping, aquarium visit</td>
+                        <td>Huge mall with endless entertainment.</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="pagination-row">
+                        <td colspan="7">
+                            <nav aria-label="Page navigation" class="d-inline-block">
+                                <ul class="pagination pagination-in-table" id="pagination">
+                                </ul>
+                            </nav>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal fade" id="dailyVisitModal" tabindex="-1" aria-labelledby="dailyVisitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dailyVisitModalLabel">Add/Edit Daily Visit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="dailyVisitForm">
+                        <div class="mb-3">
+                            <label for="dailyVisitTourId" class="form-label">Tour ID</label>
+                            <input type="text" class="form-control" id="dailyVisitTourId" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dailyVisitStartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="dailyVisitStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dailyVisitEndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="dailyVisitEndDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dailyVisitLocation" class="form-label">Location Visited</label>
+                            <input type="text" class="form-control" id="dailyVisitLocation" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dailyVisitPurpose" class="form-label">Purpose/Activity</label>
+                            <input type="text" class="form-control" id="dailyVisitPurpose" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dailyVisitNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="dailyVisitNotes" rows="3"></textarea>
+                        </div>
+                        <input type="hidden" id="dailyVisitId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveDailyVisit()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer container-fluid px-2">
+        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software Solutions</a>. All rights
+            reserved.</div>
+        <div class="control-buttons">
+            <a href="dashboard.html" title="Home" aria-label="Home">
+                <button type="button" class="btn btn-primary btn-round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M8 3.293l6 6V13.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V10H6v3.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V9.293l6-6z" />
+                        <path fill-rule="evenodd"
+                            d="M7.293 1.5a1 1 0 0 1 1.414 0l6.793 6.793-1.414 1.414L8 3.707 1.914 9.707 0.5 8.293 7.293 1.5z" />
+                    </svg>
+                </button>
+            </a>
+
+            <button type="button" class="btn btn-primary btn-round" title="Back" aria-label="Go Back"
+                onclick="history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 1-.5.5H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 1 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z" />
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterVisitIdInput = document.getElementById('filterVisitId');
+            const filterTourIdInput = document.getElementById('filterTourId');
+            const filterStartDateInput = document.getElementById('filterStartDate'); // New start date filter
+            const filterEndDateInput = document.getElementById('filterEndDate');     // New end date filter
+            const filterLocationVisitedInput = document.getElementById('filterLocationVisited');
+            const dailyVisitTableBody = document.querySelector('#dailyVisitTable tbody');
+            const dailyVisitTable = document.getElementById('dailyVisitTable');
+            const paginationContainer = document.getElementById('pagination');
+            const exportExcelBtn = document.getElementById('exportExcelBtn');
+            const exportPdfBtn = document.getElementById('exportPdfBtn');
+
+            // Get modal instance and DOM element
+            const dailyVisitModalElement = document.getElementById('dailyVisitModal');
+            const dailyVisitModal = new bootstrap.Modal(dailyVisitModalElement);
+            const saveDailyVisitButton = document.querySelector('#dailyVisitModal .modal-footer .btn-primary'); // Get the save button
+
+            // Store all initial table rows for filtering and pagination
+            let allTableRows = Array.from(dailyVisitTableBody.querySelectorAll('tr'));
+            let filteredRows = []; // To store rows that match current filters
+            let currentPage = 1;
+            const rowsPerPage = 7; // You can adjust this value
+
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            // Function to display rows for the current page
+            function displayRows(rows) {
+                dailyVisitTableBody.innerHTML = ''; // Clear current table body
+                const startIndex = (currentPage - 1) * rowsPerPage;
+                const endIndex = startIndex + rowsPerPage;
+                const rowsToDisplay = rows.slice(startIndex, endIndex);
+
+                if (rowsToDisplay.length === 0) {
+                    const noResultsRow = dailyVisitTableBody.insertRow();
+                    const noResultsCell = noResultsRow.insertCell();
+                    noResultsCell.colSpan = dailyVisitTable.querySelectorAll('thead th').length;
+                    noResultsCell.textContent = 'No matching daily visits found.';
+                    noResultsCell.style.textAlign = 'center';
+                    noResultsCell.style.padding = '1rem';
+                    noResultsCell.style.color = '#6b7280';
+                } else {
+                    rowsToDisplay.forEach(row => {
+                        dailyVisitTableBody.appendChild(row);
+                    });
+                }
+                addEditEventListeners(); // Add event listeners after displaying rows
+            }
+
+            // Function to set up pagination buttons
+            function setupPagination(rows) {
+                paginationContainer.innerHTML = '';
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+
+                if (pageCount <= 1 && rows.length === 0) {
+                    return; // No pagination needed if no data or only one page
+                }
+
+                // Previous button
+                let prevItem = document.createElement('li');
+                prevItem.classList.add('page-item');
+                let prevLink = document.createElement('a');
+                prevLink.classList.add('page-link');
+                prevLink.href = '#';
+                prevLink.setAttribute('aria-label', 'Previous');
+                prevLink.innerHTML = '<span aria-hidden="true">&laquo;</span>';
+                prevLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        displayRows(filteredRows);
+                        updatePaginationButtons();
+                    }
+                });
+                prevItem.appendChild(prevLink);
+                paginationContainer.appendChild(prevItem);
+
+                // Page number buttons
+                for (let i = 1; i <= pageCount; i++) {
+                    let pageItem = document.createElement('li');
+                    pageItem.classList.add('page-item');
+                    let pageLink = document.createElement('a');
+                    pageLink.classList.add('page-link');
+                    pageLink.href = '#';
+                    pageLink.textContent = i;
+                    pageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = i;
+                        displayRows(filteredRows);
+                        updatePaginationButtons();
+                    });
+                    pageItem.appendChild(pageLink);
+                    paginationContainer.appendChild(pageItem);
+                }
+
+                // Next button
+                let nextItem = document.createElement('li');
+                nextItem.classList.add('page-item');
+                let nextLink = document.createElement('a');
+                nextLink.classList.add('page-link');
+                nextLink.href = '#';
+                nextLink.setAttribute('aria-label', 'Next');
+                nextLink.innerHTML = '<span aria-hidden="true">&raquo;</span>';
+                nextLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage < pageCount) {
+                        currentPage++;
+                        displayRows(filteredRows);
+                        updatePaginationButtons();
+                    }
+                });
+                nextItem.appendChild(nextLink);
+                paginationContainer.appendChild(nextItem);
+
+                updatePaginationButtons();
+            }
+
+            // Function to update active/disabled state of pagination buttons
+            function updatePaginationButtons() {
+                const pageItems = paginationContainer.querySelectorAll('.page-item');
+                const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+
+                pageItems.forEach(item => item.classList.remove('active', 'disabled'));
+
+                // Disable Previous button if on first page
+                if (currentPage === 1) {
+                    pageItems[0].classList.add('disabled');
+                }
+                // Disable Next button if on last page
+                if (currentPage === pageCount) {
+                    pageItems[pageItems.length - 1].classList.add('disabled');
+                }
+
+                // Set active class for current page number
+                if (pageCount > 0 && currentPage >= 1 && currentPage <= pageCount) {
+                    // +1 because pageItems[0] is 'Previous'
+                    if (pageItems[currentPage]) { // Check if the element exists
+                        pageItems[currentPage].classList.add('active');
+                    }
+                }
+            }
+
+            // Function to apply filters
+            function applyFilters() {
+                const visitIdFilter = filterVisitIdInput.value.toLowerCase();
+                const tourIdFilter = filterTourIdInput.value.toLowerCase();
+                const startDateFilter = filterStartDateInput.value; // Get start date filter
+                const endDateFilter = filterEndDateInput.value;     // Get end date filter
+                const locationVisitedFilter = filterLocationVisitedInput.value.toLowerCase();
+
+                filteredRows = allTableRows.filter(row => {
+                    const visitId = row.cells[0].textContent.toLowerCase();
+                    const tourId = row.cells[1].textContent.toLowerCase();
+                    const rowStartDate = row.cells[2].textContent; // Start Date is in the 3rd column (index 2)
+                    const rowEndDate = row.cells[3].textContent;   // End Date is in the 4th column (index 3)
+                    const locationVisited = row.cells[4].textContent.toLowerCase(); // Location is now index 4
+
+                    const idMatch = visitId.includes(visitIdFilter);
+                    const tourIdMatch = tourId.includes(tourIdFilter);
+                    const locationMatch = locationVisited.includes(locationVisitedFilter);
+
+                    // Date range filtering logic
+                    let dateRangeMatch = true;
+                    if (startDateFilter !== '' && rowStartDate < startDateFilter) {
+                        dateRangeMatch = false; // Visit starts before the filter start date
+                    }
+                    if (endDateFilter !== '' && rowEndDate > endDateFilter) {
+                        dateRangeMatch = false; // Visit ends after the filter end date
+                    }
+                    // If only start date is provided, filter for dates on or after start date
+                    if (startDateFilter !== '' && endDateFilter === '' && rowStartDate < startDateFilter) {
+                        dateRangeMatch = false;
+                    }
+                    // If only end date is provided, filter for dates on or before end date
+                    if (endDateFilter !== '' && startDateFilter === '' && rowEndDate > endDateFilter) {
+                        dateRangeMatch = false;
+                    }
+
+                    return idMatch && tourIdMatch && dateRangeMatch && locationMatch;
+                });
+
+                currentPage = 1; // Reset to first page on new filter
+                displayRows(filteredRows);
+                setupPagination(filteredRows);
+            }
+
+            // Function to export to Excel
+            function exportToExcel() {
+                const ws_data = [
+                    Array.from(dailyVisitTable.querySelectorAll('thead th')).map(th => th.textContent)
+                ];
+                // Use filteredRows for export
+                filteredRows.forEach(row => {
+                    const rowData = [];
+                    Array.from(row.cells).forEach(cell => {
+                        rowData.push(cell.textContent);
+                    });
+                    ws_data.push(rowData);
+                });
+
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Daily Visit Details");
+                XLSX.writeFile(wb, "Daily_Visit_Details.xlsx");
+            }
+
+            // Function to export to PDF
+            function exportToPdf() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                const headers = Array.from(dailyVisitTable.querySelectorAll('thead th')).map(th => th.textContent);
+                // Use filteredRows for export
+                const data = filteredRows.map(row => Array.from(row.cells).map(cell => cell.textContent));
+
+                doc.autoTable({
+                    head: [headers],
+                    body: data,
+                    startY: 20,
+                    styles: {
+                        fontSize: 10,
+                        cellPadding: 3,
+                    },
+                    headStyles: {
+                        fillColor: [233, 242, 255], // #e9f2ff
+                        textColor: [33, 37, 41], // #212529
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 249, 250] // #f8f9fa
+                    }
+                });
+
+                doc.save("Daily_Visit_Details.pdf");
+            }
+
+            // Daily Visit Modal functions
+            window.openEditModal = function (type, data) {
+                if (type === 'dailyVisit') {
+                    document.getElementById('dailyVisitTourId').value = data.tourId;
+                    document.getElementById('dailyVisitStartDate').value = data.startDate; // New start date field
+                    document.getElementById('dailyVisitEndDate').value = data.endDate;     // New end date field
+                    document.getElementById('dailyVisitLocation').value = data.locationVisited;
+                    document.getElementById('dailyVisitPurpose').value = data.purposeActivity;
+                    document.getElementById('dailyVisitNotes').value = data.notes;
+                    document.getElementById('dailyVisitId').value = data.id;
+                    document.getElementById('dailyVisitModalLabel').innerText = 'Edit Daily Visit';
+                    saveDailyVisitButton.textContent = 'Update'; // Change button text for edit mode
+                    dailyVisitModal.show();
+                } else { // This is for 'add new' mode (when the plus button is clicked)
+                    document.getElementById('dailyVisitTourId').value = '';
+                    document.getElementById('dailyVisitStartDate').value = '';
+                    document.getElementById('dailyVisitEndDate').value = '';
+                    document.getElementById('dailyVisitLocation').value = '';
+                    document.getElementById('dailyVisitPurpose').value = '';
+                    document.getElementById('dailyVisitNotes').value = '';
+                    document.getElementById('dailyVisitId').value = ''; // Clear hidden ID for new entry
+                    document.getElementById('dailyVisitModalLabel').innerText = 'Add New Daily Visit';
+                    saveDailyVisitButton.textContent = 'Save'; // Ensure it's 'Save' for new entries
+                    // The modal is shown by the data-bs-target attribute on the add button if coming from the plus button click directly
+                }
+            };
+
+            // Modified saveDailyVisit function
+            window.saveDailyVisit = function () {
+                var tourId = document.getElementById('dailyVisitTourId').value;
+                var startDate = document.getElementById('dailyVisitStartDate').value; // New start date field
+                var endDate = document.getElementById('dailyVisitEndDate').value;     // New end date field
+                var locationVisited = document.getElementById('dailyVisitLocation').value;
+                var purposeActivity = document.getElementById('dailyVisitPurpose').value;
+                var notes = document.getElementById('dailyVisitNotes').value;
+                var id = document.getElementById('dailyVisitId').value;
+
+                if (id) {
+                    console.log('Updating Daily Visit:', { id, tourId, startDate, endDate, locationVisited, purposeActivity, notes });
+                    // In a real application, send update request to server
+                    // For demo, find and update the row in allTableRows
+                    const rowIndex = allTableRows.findIndex(row => row.cells[0].textContent === id);
+                    if (rowIndex !== -1) {
+                        allTableRows[rowIndex].cells[1].textContent = tourId;
+                        allTableRows[rowIndex].cells[2].textContent = startDate; // Update start date column
+                        allTableRows[rowIndex].cells[3].textContent = endDate;   // Update end date column
+                        allTableRows[rowIndex].cells[4].textContent = locationVisited;
+                        allTableRows[rowIndex].cells[5].textContent = purposeActivity;
+                        allTableRows[rowIndex].cells[6].textContent = notes;
+                    }
+                } else {
+                    console.log('Adding New Daily Visit:', { tourId, startDate, endDate, locationVisited, purposeActivity, notes });
+                    // In a real application, send add request to server
+                    // For demo, create a new row (assign a temporary ID)
+                    const newIdNum = allTableRows.length > 0 ? (Math.max(...allTableRows.map(row => {
+                        const currentId = row.cells[0].textContent;
+                        const num = parseInt(currentId.replace('DV', ''));
+                        return isNaN(num) ? 0 : num;
+                    })) + 1) : 1;
+                    const newId = 'DV' + String(newIdNum).padStart(3, '0'); // Format as DV001, DV002 etc.
+
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${newId}</td>
+                        <td>${tourId}</td>
+                        <td>${startDate}</td>
+                        <td>${endDate}</td>
+                        <td>${locationVisited}</td>
+                        <td>${purposeActivity}</td>
+                        <td>${notes}</td>
+                    `;
+                    allTableRows.push(newRow); // Add to the master list
+                }
+
+                // Re-apply filters and re-display table to reflect changes
+                applyFilters();
+
+                // Close modal
+                dailyVisitModal.hide();
+                // The 'hidden.bs.modal' event listener will handle resetting the button text and form
+            };
+
+            // NEW FUNCTION: Add click event listeners to table rows for editing
+            function addEditEventListeners() {
+                dailyVisitTableBody.querySelectorAll('tr').forEach(row => {
+                    // Remove existing listeners to prevent duplicates if displayRows is called multiple times
+                    row.removeEventListener('click', handleRowClick);
+                    // Add the new listener
+                    row.addEventListener('click', handleRowClick);
+                    row.style.cursor = 'pointer'; // Indicate that rows are clickable
+                });
+            }
+
+            function handleRowClick() {
+                const visitId = this.cells[0].textContent;
+                const tourId = this.cells[1].textContent;
+                const visitStartDate = this.cells[2].textContent; // Get start date from table
+                const visitEndDate = this.cells[3].textContent;   // Get end date from table
+                const locationVisited = this.cells[4].textContent;
+                const purposeActivity = this.cells[5].textContent;
+                const notes = this.cells[6].textContent;
+
+                // Populate and open the modal
+                openEditModal('dailyVisit', {
+                    id: visitId,
+                    tourId: tourId,
+                    startDate: visitStartDate, // Pass start date
+                    endDate: visitEndDate,     // Pass end date
+                    locationVisited: locationVisited,
+                    purposeActivity: purposeActivity,
+                    notes: notes
+                });
+            }
+
+            // Event listener for when the modal is fully hidden
+            dailyVisitModalElement.addEventListener('hidden.bs.modal', function () {
+                document.getElementById('dailyVisitModalLabel').innerText = 'Add/Edit Daily Visit'; // Reset label
+                saveDailyVisitButton.textContent = 'Save'; // Always reset to 'Save' when modal closes
+                document.getElementById('dailyVisitForm').reset(); // Clear form fields
+            });
+
+            // Event Listeners for filter inputs (triggering applyFilters on 'input' event)
+            filterVisitIdInput.addEventListener('input', applyFilters);
+            filterTourIdInput.addEventListener('input', applyFilters);
+            filterStartDateInput.addEventListener('change', applyFilters); // 'change' for date input
+            filterEndDateInput.addEventListener('change', applyFilters);   // 'change' for date input
+            filterLocationVisitedInput.addEventListener('input', applyFilters);
+
+            // Event Listeners for export buttons
+            exportExcelBtn.addEventListener('click', exportToExcel);
+            exportPdfBtn.addEventListener('click', exportToPdf);
+
+            // Event listener for the "Add New Daily Visit" button (plus button)
+            document.querySelector('.btn-primary[data-bs-target="#dailyVisitModal"]').addEventListener('click', function () {
+                openEditModal('add'); // Call openEditModal in 'add' mode
+            });
+
+            // Initial application of filters and pagination on page load
+            applyFilters();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Doritech</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to ensure Inter font and smooth transitions */
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6; /* Light gray background */
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* Rounded corners */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Shadow */
+            padding: 2.5rem; /* Increased padding */
+            width: 100%;
+            max-width: 28rem; /* Max width for the form */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem; /* Space between elements */
+        }
+
+        /* Removed background, border-radius, box-shadow, and centering styles from .logo-placeholder */
+        .logo-placeholder {
+            width: 96px; /* Larger logo */
+            height: 96px;
+            /* Removed background-color, border-radius, box-shadow, display, align-items, justify-content, font-size, font-weight, color */
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db; /* Light gray border */
+            border-radius: 0.5rem; /* Rounded corners */
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb; /* Blue border on focus */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Blue shadow on focus */
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: #0d6efd; /* Primary blue */
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .login-button:hover {
+            background-color: #0a58ca; /* Darker blue on hover */
+            transform: translateY(-1px);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .error-message {
+            color: #ef4444; /* Red color for error messages */
+            font-size: 0.875rem;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="login-container">
+        <div class="logo-placeholder">
+            <!-- Updated onerror to show a transparent placeholder if the image fails -->
+            <img src="https://www.eleb2b.com/Common/GetSupplierImage?name=Digitals%20India%20Security%20Products%20Pvt%20Ltd_8128.jpg" alt="Company Logo" class="rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/96x96/ffffff/0d6efd?text=Logo';">
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">Welcome Back!</h2>
+        <form id="loginForm" class="w-full flex flex-col gap-4">
+            <div>
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" id="username" placeholder="Username" class="form-input" required>
+            </div>
+            <div>
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" placeholder="Password" class="form-input" required>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+            <div id="errorMessage" class="error-message hidden"></div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMessageDiv = document.getElementById('errorMessage');
+
+            // Hardcoded credentials
+            const correctUsername = 'admin';
+            const correctPassword = 'password';
+
+            // Pre-fill username and password fields
+            usernameInput.value = correctUsername;
+            passwordInput.value = correctPassword;
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const enteredUsername = usernameInput.value;
+                const enteredPassword = passwordInput.value;
+
+                // Simplified login condition
+                if (enteredUsername === correctUsername && enteredPassword === correctPassword) {
+                    errorMessageDiv.classList.add('hidden');
+                    window.location.href = 'dashboard.html'; // Redirect to dashboard
+                } else {
+                    errorMessageDiv.textContent = 'Invalid username or password.'; // Updated error message
+                    errorMessageDiv.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

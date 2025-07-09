@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Expenses Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        main.container-fluid {
+            flex: 1 0 auto;
+        }
+
+        /* Stats cards container */
+        .stats-cards {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Each stat card */
+        .stat-card {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 0.05rem 0.1rem rgb(0 0 0 / 0.1);
+            min-width: 180px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            user-select: none;
+        }
+
+        .stat-icon {
+            font-size: 1.6rem;
+            min-width: 30px;
+            color: #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-content {
+            flex-grow: 1;
+            min-width: 125px;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin: 0;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0d6efd;
+            margin: 0;
+        }
+
+        .stat-value span {
+            font-weight: 700;
+        }
+
+        /* Individual icon colors for different states */
+        .icon-waiting {
+            color: #a67c00;
+        }
+
+        .icon-approved {
+            color: #198754;
+        }
+
+        .icon-rejected {
+            color: #dc3545;
+        }
+
+        .icon-settled {
+            color: #6610f2;
+        }
+
+        /* Date range and generate info container */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .info-row small {
+            font-weight: 400;
+            color: #343a40;
+        }
+
+        /* Tab content */
+        .tab-content {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Table styling */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        table.data-table thead tr {
+            background-color: #e9f2ff;
+            font-weight: 600;
+            color: #212529;
+            user-select: none;
+        }
+
+        table.data-table thead th,
+        table.data-table tbody td {
+            border: 1px solid #dee2e6;
+            padding: 0.45rem 0.8rem;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            color: #212529;
+        }
+
+        table.data-table thead th {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        table.data-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table.data-table tbody tr td a {
+            text-decoration: none;
+            color: #0d6efd;
+            transition: color 0.2s ease-in-out;
+        }
+
+        table.data-table tbody tr td a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+
+        /* Footer total row */
+        table.data-table tfoot tr {
+            background-color: #e9f2ff;
+            font-weight: 700;
+            color: #0d6efd;
+            user-select: none;
+        }
+
+        /* Bottom footer */
+        footer.footer {
+            font-size: 0.85rem;
+            color: #868e96;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #dee2e6;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: static;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+        }
+
+        footer.footer a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer.footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Buttons on bottom right */
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-round {
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-home {
+            background-color: #0d6efd;
+            border: none;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #0d6efd;
+            border: none;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .stats-cards {
+                gap: 0.7rem;
+            }
+
+            .stat-card {
+                min-width: 40%;
+                font-size: 0.9rem;
+            }
+
+            .stat-content {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stat-card {
+                min-width: 100%;
+                justify-content: start;
+                gap: 0.5rem;
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                min-width: 24px;
+            }
+        }
+
+        /* Adjusted styles for charts to be in the same row */
+        .chart-row {
+            display: flex;
+            flex-wrap: wrap;
+            /* Allows charts to wrap on smaller screens */
+            gap: 1rem;
+            /* Space between charts */
+            margin-bottom: 1.5rem;
+            /* Space below the charts */
+        }
+
+        .chart-col {
+            flex: 1;
+            /* Distribute available space equally */
+            min-width: 300px;
+            /* Minimum width before wrapping */
+        }
+
+        .chart-container,
+        .bar-chart-container {
+            position: relative;
+            height: 300px;
+            /* Fixed height for both charts */
+            width: 100%;
+            /* Take full width of their column */
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .date-range-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .date-range-filter label {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .date-range-filter input[type="date"] {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .date-range-filter .btn {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .date-range-filter {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-white border-bottom">
+        <ul class="nav nav-tabs container-fluid px-0" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" href="dashboard.html" type="button">Dashboard</a>
+            </li>
+            <li class="nav-item dropdown" role="presentation">
+                <a class="nav-link dropdown-toggle" id="masterDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                    href="#" role="button">
+                    Master
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="masterDropdown">
+                    <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
+                    <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
+                    <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                    <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
+                    
+                    
+                </ul>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link " href="tour-management.html" type="button">Tour Management</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="daily-visit.html" type="button">Visits</a>
+            </li>
+           
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="expenses.html" type="button">Expenses</a>
+            </li>
+            <!-- <li class="nav-item" role="presentation">
+                <a class="nav-link" href="userDetails.html" type="button">User Details</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="userMaster.html" type="button">User Master</a>
+            </li> -->
+        </ul>
+
+    </nav>
+    <main class="container-fluid my-3 px-2">
+        <div class="date-range-filter">
+            <label for="startDate">From:</label>
+            <input type="date" id="startDate" class="form-control w-auto">
+            <label for="endDate">To:</label>
+            <input type="date" id="endDate" class="form-control w-auto">
+            <button type="button" class="btn btn-primary" id="applyFilterBtn">Go</button>
+        </div>
+
+        <div class="info-row">
+            <div>Expenses Dashboard from <strong id="displayStartDate">01-02-2025</strong> to <strong id="displayEndDate">17-02-2025</strong></div>
+            <div>Generated On: <strong id="generatedOnDate">17/02/2025 03:39 pm</strong></div>
+        </div>
+        <div class="d-flex flex-wrap gap-3 stats-cards">
+            <div class="stat-card flex-grow-1 flex-lg-grow-0">
+                <div class="stat-icon" aria-label="Icon representing total submitted expenses">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0d6efd" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M2 4.5A.5.5 0 0 1 2.5 4h11a.5.5 0 0 1 .5.5V6h-12V4.5zM2 7v5.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V7H2zm1 0h10v4H3V7z" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-title mb-1">Total Submitted</p>
+                    <p class="stat-value mb-0">&#8377; <span>50659.77</span> ( <span>51</span> )</p>
+                </div>
+            </div>
+            <div class="stat-card flex-grow-1 flex-lg-grow-0">
+                <div class="stat-icon icon-waiting" aria-label="Icon representing waiting for approval expenses">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#a67c00" viewBox="0 0 16 16">
+                        <path
+                            d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zM7.5 3.5v5h1v-5h-1zm.5 7a.75.75 0 1 0 0 1.5A.75.75 0 0 0 8 10.5z" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-title mb-1">Waiting for Approval</p>
+                    <p class="stat-value mb-0">&#8377; <span>23213.27</span> ( <span>23</span> )</p>
+                </div>
+            </div>
+            <div class="stat-card flex-grow-1 flex-lg-grow-0">
+                <div class="stat-icon icon-approved" aria-label="Icon representing waiting for disbursement expenses">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#198754" viewBox="0 0 16 16">
+                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.5 10.5l4-4-1-1-3 3-1-1-1 1 2 2z" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-title mb-1">Waiting for Disbursement</p>
+                    <p class="stat-value mb-0">&#8377; <span>0</span> ( <span>0</span> )</p>
+                </div>
+            </div>
+            <div class="stat-card flex-grow-1 flex-lg-grow-0">
+                <div class="stat-icon icon-rejected" aria-label="Icon representing rejected expenses">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#dc3545" viewBox="0 0 16 16">
+                        <path
+                            d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-title mb-1">Rejected</p>
+                    <p class="stat-value mb-0">&#8377; <span>4776</span> ( <span>7</span> )</p>
+                </div>
+            </div>
+            <div class="stat-card flex-grow-1 flex-lg-grow-0">
+                <div class="stat-icon icon-settled" aria-label="Icon representing settled expenses">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#6610f2" viewBox="0 0 16 16">
+                        <path
+                            d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L5.324 8.384a.75.75 0 1 1 1.06-1.06l1.094 1.093 3.476-4.437z" />
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <p class="stat-title mb-1">Settled</p>
+                    <p class="stat-value mb-0">&#8377; <span>22670.5</span> ( <span>21</span> )</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row chart-row">
+            <div class="col-md-6 chart-col">
+                <h3 class="mt-4 text-center">Expenses Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 chart-col">
+                <h3 class="mt-4 text-center">Monthly Expenses Overview</h3>
+                <div class="bar-chart-container">
+                    <canvas id="monthlyExpensesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="expenseInnerTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employeeTab"
+                    type="button" role="tab" aria-controls="employeeTab" aria-selected="true">Employee Wise</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="project-tab" data-bs-toggle="tab" data-bs-target="#projectTab"
+                    type="button" role="tab" aria-controls="projectTab" aria-selected="false">Project Wise</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="expenseInnerTabsContent">
+            <div class="tab-pane fade show active" id="employeeTab" role="tabpanel" aria-labelledby="employee-tab"
+                tabindex="0">
+                <div class="table-responsive">
+                    <table class="data-table table table-striped table-bordered align-middle my-3"
+                        id="employeeTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Employee</th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Expenses Submitted</th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Total Submitted ( ₹ )</th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Advance Amount ( ₹ )</th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Waiting for Approval ( ₹ )
+                                </th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Waiting for Disbursement ( ₹
+                                    )
+                                </th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Rejected ( ₹ )</th>
+                                <th scope="col" aria-sort="none" title="Sortable Column">Settled ( ₹ )</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name A</td>
+                                <td><a href="#" tabindex="0">5</a></td>
+                                <td>9667.12</td>
+                                <td>8704.12</td>
+                                <td><a href="#" tabindex="0">9598.12</a></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>69</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name B</td>
+                                <td><a href="#" tabindex="0">2</a></td>
+                                <td>304.15</td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">304.15</a></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name C</td>
+                                <td><a href="#" tabindex="0">1</a></td>
+                                <td>9391</td>
+                                <td>8000</td>
+                                <td><a href="#" tabindex="0">9391</a></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name D</td>
+                                <td><a href="#" tabindex="0">2</a></td>
+                                <td>4720</td>
+                                <td>2695</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>4720</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name E</td>
+                                <td><a href="#" tabindex="0">4</a></td>
+                                <td>5796</td>
+                                <td>3000</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>5796</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name F</td>
+                                <td><a href="#" tabindex="0">1</a></td>
+                                <td>5925</td>
+                                <td>3000</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>5925</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name G</td>
+                                <td><a href="#" tabindex="0">3</a></td>
+                                <td>5380</td>
+                                <td>5450</td>
+                                <td><a href="#" tabindex="0">2730</a></td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">2650</a></td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name H</td>
+                                <td><a href="#" tabindex="0">2</a></td>
+                                <td>269</td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">269</a></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name I</td>
+                                <td><a href="#" tabindex="0">1</a></td>
+                                <td>15</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name J</td>
+                                <td><a href="#" tabindex="0">11</a></td>
+                                <td>382.5</td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">321</a></td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>61.5</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name K</td>
+                                <td><a href="#" tabindex="0">11</a></td>
+                                <td>7250</td>
+                                <td>9910</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">1655</a></td>
+                                <td>5595</td>
+                            </tr>
+                            <tr>
+                                <td tabindex="0" aria-label="Employee name blurred for privacy">Name L</td>
+                                <td><a href="#" tabindex="0">8</a></td>
+                                <td>1560</td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">600</a></td>
+                                <td>0</td>
+                                <td><a href="#" tabindex="0">471</a></td>
+                                <td>489</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td><strong>51</strong></td>
+                                <td><strong>50660</strong></td>
+                                <td><strong>40759</strong></td>
+                                <td><strong>23213</strong></td>
+                                <td><strong>0</strong></td>
+                                <td><strong>4776</strong></td>
+                                <td><strong>22671</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="pagination-container">
+                    <nav aria-label="Table pagination">
+                        <ul class="pagination" id="employeePagination">
+                            </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="projectTab" role="tabpanel" aria-labelledby="project-tab" tabindex="0">
+                <p class="text-center text-muted py-3">Project Wise data will appear here.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer container-fluid px-2">
+        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software Soloutions</a>. All rights reserved.</div>
+        <div class="control-buttons">
+            <a href="dashboard.html" title="Home" aria-label="Home">
+                <button type="button" class="btn btn-primary btn-round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house"
+                        viewBox="0 0 16 16">
+                        <path d="M8 3.293l6 6V13.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V10H6v3.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V9.293l6-6z" />
+                        <path fill-rule="evenodd"
+                            d="M7.293 1.5a1 1 0 0 1 1.414 0l6.793 6.793-1.414 1.414L8 3.707 1.914 9.707 0.5 8.293 7.293 1.5z" />
+                    </svg>
+                </button>
+            </a>
+
+            <button type="button" class="btn btn-primary btn-round" title="Back" aria-label="Go Back" onclick="history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 1-.5.5H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 1 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z" />
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to format date to DD-MM-YYYY
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
+        // Set default dates for the filter and display
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const displayStartDate = document.getElementById('displayStartDate');
+            const displayEndDate = document.getElementById('displayEndDate');
+            const generatedOnDate = document.getElementById('generatedOnDate');
+
+            // Set default values for date inputs (YYYY-MM-DD for input type="date")
+            startDateInput.value = firstDayOfMonth.toISOString().split('T')[0];
+            endDateInput.value = today.toISOString().split('T')[0];
+
+            // Update display dates and generated on date
+            displayStartDate.textContent = formatDate(startDateInput.value);
+            displayEndDate.textContent = formatDate(endDateInput.value);
+            
+            const now = new Date();
+            const genDay = String(now.getDate()).padStart(2, '0');
+            const genMonth = String(now.getMonth() + 1).padStart(2, '0');
+            const genYear = now.getFullYear();
+            let genHours = now.getHours();
+            const genMinutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = genHours >= 12 ? 'pm' : 'am';
+            genHours = genHours % 12;
+            genHours = genHours ? genHours : 12; // the hour '0' should be '12'
+            const formattedTime = `${String(genHours).padStart(2, '0')}:${genMinutes} ${ampm}`;
+            generatedOnDate.textContent = `${genDay}/${genMonth}/${genYear} ${formattedTime}`;
+
+            // Add event listener for the "Go" button
+            document.getElementById('applyFilterBtn').addEventListener('click', function() {
+                const newStartDate = startDateInput.value;
+                const newEndDate = endDateInput.value;
+
+                if (newStartDate && newEndDate) {
+                    displayStartDate.textContent = formatDate(newStartDate);
+                    displayEndDate.textContent = formatDate(newEndDate);
+                    // Here you would typically fetch new data based on the selected date range
+                    // For this example, we'll just update the display.
+                    alert(`Filtering data from ${formatDate(newStartDate)} to ${formatDate(newEndDate)}. (Actual data fetching logic not implemented in this example)`);
+                } else {
+                    alert('Please select both start and end dates.');
+                }
+            });
+        });
+
+
+        // Pie Chart for Expenses Distribution
+        const ctx = document.getElementById('expensesChart').getContext('2d');
+        const expensesChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Travel', 'Food', 'Accommodation', 'Miscellaneous'],
+                datasets: [{
+                    label: 'Expenses Distribution',
+                    data: [30000, 15000, 20000, 5000], // Example data
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Important for fixed height
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Expenses Distribution by Category'
+                    }
+                }
+            }
+        });
+
+        // Bar Chart for Monthly Expenses Overview
+        const barCtx = document.getElementById('monthlyExpensesChart').getContext('2d');
+        const monthlyExpensesChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'Monthly Expenses (₹)',
+                    data: [12000, 15000, 8000, 20000, 17000, 22000], // Example data
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Important for fixed height
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Amount (₹)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Expenses Overview'
+                    }
+                }
+            }
+        });
+
+        // Pagination for Employee Table
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('employeeTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const rowsPerPage = 5; // Number of rows to display per page
+            const paginationContainer = document.getElementById('employeePagination');
+            let currentPage = 1;
+
+            function displayRows(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                rows.forEach((row, index) => {
+                    row.style.display = (index >= start && index < end) ? '' : 'none';
+                });
+            }
+
+            function setupPagination(numPages) {
+                paginationContainer.innerHTML = ''; // Clear existing pagination
+
+                // Add "Previous" button with arrow
+                const prevLi = document.createElement('li');
+                prevLi.classList.add('page-item');
+                const prevLink = document.createElement('a');
+                prevLink.classList.add('page-link');
+                prevLink.href = '#';
+                prevLink.setAttribute('aria-label', 'Previous');
+                prevLink.innerHTML = '<span aria-hidden="true">&laquo;</span>'; // Left arrow
+                prevLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        displayRows(currentPage);
+                        updateActivePagination();
+                    }
+                });
+                prevLi.appendChild(prevLink);
+                paginationContainer.appendChild(prevLi);
+
+                for (let i = 1; i <= numPages; i++) {
+                    const li = document.createElement('li');
+                    li.classList.add('page-item');
+                    const link = document.createElement('a');
+                    link.classList.add('page-link');
+                    link.href = '#';
+                    link.textContent = i;
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = i;
+                        displayRows(currentPage);
+                        updateActivePagination();
+                    });
+                    li.appendChild(link);
+                    paginationContainer.appendChild(li);
+                }
+
+                // Add "Next" button with arrow
+                const nextLi = document.createElement('li');
+                nextLi.classList.add('page-item');
+                const nextLink = document.createElement('a');
+                nextLink.classList.add('page-link');
+                nextLink.href = '#';
+                nextLink.setAttribute('aria-label', 'Next');
+                nextLink.innerHTML = '<span aria-hidden="true">&raquo;</span>'; // Right arrow
+                nextLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage < numPages) {
+                        currentPage++;
+                        displayRows(currentPage);
+                        updateActivePagination();
+                    }
+                });
+                nextLi.appendChild(nextLink);
+                paginationContainer.appendChild(nextLi);
+
+                updateActivePagination(); // Set active class for the initial page
+            }
+
+            function updateActivePagination() {
+                const pageItems = paginationContainer.querySelectorAll('.page-item');
+                pageItems.forEach(item => item.classList.remove('active'));
+
+                // Adjust index for "Previous" button
+                const activePageIndex = currentPage;
+                if (activePageIndex > 0 && activePageIndex <= pageItems.length - 2) { // -2 accounts for prev and next buttons
+                    pageItems[activePageIndex].classList.add('active');
+                }
+            }
+
+            const numPages = Math.ceil(rows.length / rowsPerPage);
+            setupPagination(numPages);
+            displayRows(currentPage);
+        });
+    </script>
+</body>
+
+</html>

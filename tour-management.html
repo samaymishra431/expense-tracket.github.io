@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tour Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        main.container-fluid {
+            flex: 1 0 auto;
+        }
+
+        /* Tab content */
+        .tab-content {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Table styling */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            /* Added border-radius for the whole table */
+            border-radius: 0.375rem;
+            overflow: hidden;
+            /* Ensures inner content respects border-radius */
+            border: 1px solid #dee2e6;
+        }
+
+        table.data-table thead tr {
+            background-color: #e9f2ff;
+            font-weight: 600;
+            color: #212529;
+            user-select: none;
+        }
+
+        table.data-table thead th,
+        table.data-table tbody td,
+        table.data-table tfoot td {
+            border: 1px solid #dee2e6;
+            padding: 0.45rem 0.8rem;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            color: #212529;
+        }
+
+        table.data-table thead th {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        /* Top corners for the table header */
+        table.data-table thead tr:first-child th:first-child {
+            border-top-left-radius: 0.375rem;
+        }
+
+        table.data-table thead tr:first-child th:last-child {
+            border-top-right-radius: 0.375rem;
+        }
+
+
+        table.data-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table.data-table tbody tr td a {
+            text-decoration: none;
+            color: #0d6efd;
+            transition: color 0.2s ease-in-out;
+        }
+
+        table.data-table tbody tr td a:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+
+        /* Footer total row (no longer used for pagination but kept for general footer styling) */
+        table.data-table tfoot tr.total-row {
+            background-color: #e9f2ff;
+            font-weight: 700;
+            color: #0d6efd;
+            user-select: none;
+        }
+
+        /* Pagination row in table footer */
+        table.data-table tfoot tr.pagination-row td {
+            background-color: white;
+            /* Light background for pagination row */
+            border-top: 1px solid #dee2e6;
+            padding: 0.75rem;
+            text-align: right;
+            /* Align pagination to right */
+            /* Bottom corners for the table footer */
+            border-bottom-left-radius: 0.375rem;
+            border-bottom-right-radius: 0.375rem;
+        }
+
+
+        /* Bottom footer */
+        footer.footer {
+            font-size: 0.85rem;
+            color: #868e96;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid #dee2e6;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: static;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+            margin-top: auto;
+            /* Pushes footer to the bottom */
+        }
+
+        footer.footer a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer.footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Buttons on bottom right */
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-round {
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-home {
+            background-color: #0d6efd;
+            border: none;
+            color: white;
+        }
+
+        .btn-back {
+            background-color: #0d6efd;
+            border: none;
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .stats-cards {
+                gap: 0.7rem;
+            }
+
+            .stat-card {
+                min-width: 40%;
+                font-size: 0.9rem;
+            }
+
+            .stat-content {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stat-card {
+                min-width: 100%;
+                justify-content: start;
+                gap: 0.5rem;
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+                min-width: 24px;
+            }
+        }
+
+        /* Styles for filter card */
+        .filter-card {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            /* Space below the filter card */
+        }
+
+        /* Pagination styling within the table footer */
+        .pagination-in-table {
+            display: inline-flex;
+            /* Use inline-flex for horizontal alignment of pagination items */
+            margin-bottom: 0;
+            /* Remove default ul margin */
+        }
+
+        .pagination-in-table .page-link {
+            color: #0d6efd;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            margin: 0 2px;
+            /* Spacing between buttons */
+            padding: 0.375rem 0.75rem;
+            /* Bootstrap default padding */
+        }
+
+        .pagination-in-table .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+        }
+
+        .pagination-in-table .page-link:hover {
+            background-color: #e9f2ff;
+            color: #0d6efd;
+        }
+
+        .modal-header {
+            background-color: #e0f2fe;
+            border-bottom: 1px solid #bfdbfe;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="bg-white border-bottom">
+        <ul class="nav nav-tabs container-fluid px-0" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="dashboard.html" type="button">Dashboard</a>
+            </li>
+            <li class="nav-item dropdown" role="presentation">
+                <a class="nav-link dropdown-toggle" id="masterDropdown" data-bs-toggle="dropdown"
+                    aria-expanded="false" href="#" role="button">
+                    Master
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="masterDropdown">
+                    <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
+                    <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
+                    <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                    <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
+                    
+                    
+                </ul>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" href="tour-management.html" type="button">Tour Management</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="daily-visit.html" type="button">Visits</a>
+            </li>
+           
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="expenses.html" type="button">Expenses</a>
+            </li>
+        </ul>
+    </nav>
+    <main class="container-fluid my-3 px-2">
+        <div class="filter-card">
+            <h6 class="mb-3">Filter Tours</h6>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <label for="filterTourId" class="form-label visually-hidden">Tour ID</label>
+                    <input type="text" class="form-control" id="filterTourId" placeholder="Tour ID">
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <label for="filterDestination" class="form-label visually-hidden">Destination</label>
+                    <input type="text" class="form-control" id="filterDestination" placeholder="Destination">
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <label for="filterStartDate" class="form-label visually-hidden">Start Date</label>
+                    <input type="date" class="form-control" id="filterStartDate" placeholder="Start Date">
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <label for="filterEndDate" class="form-label visually-hidden">End Date</label>
+                    <input type="date" class="form-control" id="filterEndDate" placeholder="End Date">
+                </div>
+                <div class="col-md-2 col-sm-6">
+                    <label for="filterStatus" class="form-label visually-hidden">Status</label>
+                    <input type="text" class="form-control" id="filterStatus" placeholder="Status">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center px-3 py-2"
+            style="background-color: #e0f2fe; border: 1px solid #dee2e6; border-bottom: 1px solid #bfdbfe; border-radius: 0.375rem 0.375rem 0 0;">
+            <h5 class="mb-0">Tour Management</h5>
+            <div class="d-flex">
+                <button class="btn btn-success btn-sm me-2" id="exportExcelBtn" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Export to Excel">
+                    <i class="fas fa-file-excel"></i>
+                </button>
+                <button class="btn btn-danger btn-sm me-2" id="exportPdfBtn" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="Export to PDF">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tourModal"
+                    title="Add New Tour">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive" style="margin-top: 0;">
+            <table class="data-table table table-striped table-bordered align-middle mb-0" id="tourTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Tour ID</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Start Date</th>
+                        <th scope="col">End Date</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>T001</td>
+                        <td>Paris, France</td>
+                        <td>2024-07-01</td>
+                        <td>2024-07-07</td>
+                        <td>Confirmed</td>
+                    </tr>
+                    <tr>
+                        <td>T002</td>
+                        <td>Tokyo, Japan</td>
+                        <td>2024-07-10</td>
+                        <td>2024-07-18</td>
+                        <td>Pending</td>
+                    </tr>
+                    <tr>
+                        <td>T003</td>
+                        <td>New York, USA</td>
+                        <td>2024-08-05</td>
+                        <td>2024-08-10</td>
+                        <td>Cancelled</td>
+                    </tr>
+                    <tr>
+                        <td>T004</td>
+                        <td>Sydney, Australia</td>
+                        <td>2024-08-20</td>
+                        <td>2024-08-30</td>
+                        <td>Confirmed</td>
+                    </tr>
+                    <tr>
+                        <td>T005</td>
+                        <td>Rome, Italy</td>
+                        <td>2024-09-01</td>
+                        <td>2024-09-05</td>
+                        <td>Confirmed</td>
+                    </tr>
+                    <tr>
+                        <td>T006</td>
+                        <td>London, UK</td>
+                        <td>2024-09-15</td>
+                        <td>2024-09-22</td>
+                        <td>Pending</td>
+                    </tr>
+                    <tr>
+                        <td>T007</td>
+                        <td>Dubai, UAE</td>
+                        <td>2024-10-01</td>
+                        <td>2024-10-06</td>
+                        <td>Confirmed</td>
+                    </tr>
+                    <tr>
+                        <td>T008</td>
+                        <td>Rio de Janeiro, Brazil</td>
+                        <td>2024-10-10</td>
+                        <td>2024-10-17</td>
+                        <td>Confirmed</td>
+                    </tr>
+                    <tr>
+                        <td>T009</td>
+                        <td>Cairo, Egypt</td>
+                        <td>2024-11-01</td>
+                        <td>2024-11-08</td>
+                        <td>Pending</td>
+                    </tr>
+                    <tr>
+                        <td>T010</td>
+                        <td>Berlin, Germany</td>
+                        <td>2024-11-15</td>
+                        <td>2024-11-20</td>
+                        <td>Confirmed</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="pagination-row">
+                        <td colspan="5">
+                            <nav aria-label="Page navigation" class="d-inline-block">
+                                <ul class="pagination pagination-in-table" id="pagination">
+                                </ul>
+                            </nav>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal fade" id="tourModal" tabindex="-1" aria-labelledby="tourModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tourModalLabel">Add/Edit Tour</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="tourForm">
+                        <div class="mb-3">
+                            <label for="tourDestination" class="form-label">Destination</label>
+                            <input type="text" class="form-control" id="tourDestination" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tourStartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="tourStartDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tourEndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="tourEndDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tourStatus" class="form-label">Status</label>
+                            <input type="text" class="form-control" id="tourStatus" required>
+                        </div>
+                        <input type="hidden" id="tourId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTour()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer container-fluid px-2">
+        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software Solutions</a>. All rights
+            reserved.</div>
+        <div class="control-buttons">
+            <a href="dashboard.html" title="Home" aria-label="Home">
+                <button type="button" class="btn btn-primary btn-round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M8 3.293l6 6V13.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V10H6v3.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V9.293l6-6z" />
+                        <path fill-rule="evenodd"
+                            d="M7.293 1.5a1 1 0 0 1 1.414 0l6.793 6.793-1.414 1.414L8 3.707 1.914 9.707 0.5 8.293 7.293 1.5z" />
+                    </svg>
+                </button>
+            </a>
+
+            <button type="button" class="btn btn-primary btn-round" title="Back" aria-label="Go Back"
+                onclick="history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M15 8a.5.5 0 0 1-.5.5H3.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 1 1 .708.708L3.707 7.5H14.5A.5.5 0 0 1 15 8z" />
+                </svg>
+            </button>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterTourIdInput = document.getElementById('filterTourId');
+            const filterDestinationInput = document.getElementById('filterDestination');
+            const filterStartDateInput = document.getElementById('filterStartDate');
+            const filterEndDateInput = document.getElementById('filterEndDate');
+            const filterStatusInput = document.getElementById('filterStatus');
+            const tourTableBody = document.querySelector('#tourTable tbody');
+            const tourTable = document.getElementById('tourTable');
+            const paginationContainer = document.getElementById('pagination');
+            const exportExcelBtn = document.getElementById('exportExcelBtn');
+            const exportPdfBtn = document.getElementById('exportPdfBtn');
+
+            // Get modal instance and DOM element
+            const tourModalElement = document.getElementById('tourModal');
+            const tourModal = new bootstrap.Modal(tourModalElement);
+            const saveTourButton = document.querySelector('#tourModal .modal-footer .btn-primary'); // Get the save button
+
+            // Store all initial table rows for filtering and pagination
+            let allTableRows = Array.from(tourTableBody.querySelectorAll('tr'));
+            let filteredRows = []; // To store rows that match current filters
+            let currentPage = 1;
+            const rowsPerPage = 7; // You can adjust this value
+
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            // Function to display rows for the current page
+            function displayRows(rows) {
+                tourTableBody.innerHTML = ''; // Clear current table body
+                const startIndex = (currentPage - 1) * rowsPerPage;
+                const endIndex = startIndex + rowsPerPage;
+                const rowsToDisplay = rows.slice(startIndex, endIndex);
+
+                if (rowsToDisplay.length === 0) {
+                    const noResultsRow = tourTableBody.insertRow();
+                    const noResultsCell = noResultsRow.insertCell();
+                    noResultsCell.colSpan = tourTable.querySelectorAll('thead th').length;
+                    noResultsCell.textContent = 'No matching tours found.';
+                    noResultsCell.style.textAlign = 'center';
+                    noResultsCell.style.padding = '1rem';
+                    noResultsCell.style.color = '#6b7280';
+                } else {
+                    rowsToDisplay.forEach(row => {
+                        tourTableBody.appendChild(row);
+                    });
+                }
+                addEditEventListeners(); // Add event listeners after displaying rows
+            }
+
+            // Function to set up pagination buttons
+            function setupPagination(rows) {
+                paginationContainer.innerHTML = '';
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+
+                if (pageCount <= 1 && rows.length === 0) {
+                    return; // No pagination needed if no data or only one page
+                }
+
+                // Previous button
+                let prevItem = document.createElement('li');
+                prevItem.classList.add('page-item');
+                let prevLink = document.createElement('a');
+                prevLink.classList.add('page-link');
+                prevLink.href = '#';
+                prevLink.setAttribute('aria-label', 'Previous');
+                prevLink.innerHTML = '<span aria-hidden="true">&laquo;</span>';
+                prevLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        displayRows(filteredRows);
+                        updatePaginationButtons();
+                    }
+                });
+                prevItem.appendChild(prevLink);
+                paginationContainer.appendChild(prevItem);
+
+                // Page number buttons
+                for (let i = 1; i <= pageCount; i++) {
+                    let pageItem = document.createElement('li');
+                    pageItem.classList.add('page-item');
+                    let pageLink = document.createElement('a');
+                    pageLink.classList.add('page-link');
+                    pageLink.href = '#';
+                    pageLink.textContent = i;
+                    pageLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentPage = i;
+                        displayRows(filteredRows);
+                        updatePaginationButtons();
+                    });
+                    pageItem.appendChild(pageLink);
+                    paginationContainer.appendChild(pageItem);
+                }
+
+                // Next button
+                let nextItem = document.createElement('li');
+                nextItem.classList.add('page-item');
+                let nextLink = document.createElement('a');
+                nextLink.classList.add('page-link');
+                nextLink.href = '#';
+                nextLink.setAttribute('aria-label', 'Next');
+                nextLink.innerHTML = '<span aria-hidden="true">&raquo;</span>';
+                nextLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (currentPage < pageCount) {
+                        currentPage++;
+                        displayRows(filteredRows);
+                        updatePaginationButtons();
+                    }
+                });
+                nextItem.appendChild(nextLink);
+                paginationContainer.appendChild(nextItem);
+
+                updatePaginationButtons();
+            }
+
+            // Function to update active/disabled state of pagination buttons
+            function updatePaginationButtons() {
+                const pageItems = paginationContainer.querySelectorAll('.page-item');
+                const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
+
+                pageItems.forEach(item => item.classList.remove('active', 'disabled'));
+
+                // Disable Previous button if on first page
+                if (currentPage === 1) {
+                    pageItems[0].classList.add('disabled');
+                }
+                // Disable Next button if on last page
+                if (currentPage === pageCount) {
+                    pageItems[pageItems.length - 1].classList.add('disabled');
+                }
+
+                // Set active class for current page number
+                if (pageCount > 0 && currentPage >= 1 && currentPage <= pageCount) {
+                    // +1 because pageItems[0] is 'Previous'
+                    if (pageItems[currentPage]) { // Check if the element exists
+                        pageItems[currentPage].classList.add('active');
+                    }
+                }
+            }
+
+            // Function to apply filters
+            function applyFilters() {
+                const tourIdFilter = filterTourIdInput.value.toLowerCase();
+                const destinationFilter = filterDestinationInput.value.toLowerCase();
+                const startDateFilter = filterStartDateInput.value;
+                const endDateFilter = filterEndDateInput.value;
+                const statusFilter = filterStatusInput.value.toLowerCase();
+
+                filteredRows = allTableRows.filter(row => {
+                    const tourId = row.cells[0].textContent.toLowerCase();
+                    const destination = row.cells[1].textContent.toLowerCase();
+                    const startDate = row.cells[2].textContent;
+                    const endDate = row.cells[3].textContent;
+                    const status = row.cells[4].textContent.toLowerCase();
+
+                    const idMatch = tourId.includes(tourIdFilter);
+                    const destinationMatch = destination.includes(destinationFilter);
+                    const startDateMatch = startDateFilter === '' || startDate === startDateFilter;
+                    const endDateMatch = endDateFilter === '' || endDate === endDateFilter;
+                    const statusMatch = status.includes(statusFilter);
+
+                    return idMatch && destinationMatch && startDateMatch && endDateMatch && statusMatch;
+                });
+
+                currentPage = 1; // Reset to first page on new filter
+                displayRows(filteredRows);
+                setupPagination(filteredRows);
+            }
+
+            // Function to export to Excel
+            function exportToExcel() {
+                const ws_data = [
+                    Array.from(tourTable.querySelectorAll('thead th')).map(th => th.textContent)
+                ];
+                // Use filteredRows for export
+                filteredRows.forEach(row => {
+                    const rowData = [];
+                    Array.from(row.cells).forEach(cell => {
+                        rowData.push(cell.textContent);
+                    });
+                    ws_data.push(rowData);
+                });
+
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Tour Details");
+                XLSX.writeFile(wb, "Tour_Details.xlsx");
+            }
+
+            // Function to export to PDF
+            function exportToPdf() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                const headers = Array.from(tourTable.querySelectorAll('thead th')).map(th => th.textContent);
+                // Use filteredRows for export
+                const data = filteredRows.map(row => Array.from(row.cells).map(cell => cell.textContent));
+
+                doc.autoTable({
+                    head: [headers],
+                    body: data,
+                    startY: 20,
+                    styles: {
+                        fontSize: 10,
+                        cellPadding: 3,
+                    },
+                    headStyles: {
+                        fillColor: [233, 242, 255], // #e9f2ff
+                        textColor: [33, 37, 41], // #212529
+                        fontStyle: 'bold'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 249, 250] // #f8f9fa
+                    }
+                });
+
+                doc.save("Tour_Details.pdf");
+            }
+
+            // Tour Modal functions
+            window.openEditModal = function (type, data) {
+                if (type === 'tour') {
+                    document.getElementById('tourDestination').value = data.destination;
+                    document.getElementById('tourStartDate').value = data.startDate;
+                    document.getElementById('tourEndDate').value = data.endDate;
+                    document.getElementById('tourStatus').value = data.status;
+                    document.getElementById('tourId').value = data.id;
+                    document.getElementById('tourModalLabel').innerText = 'Edit Tour';
+                    saveTourButton.textContent = 'Update'; // Change button text for edit mode
+                    tourModal.show();
+                } else { // This is for 'add new' mode (when the plus button is clicked)
+                    document.getElementById('tourDestination').value = '';
+                    document.getElementById('tourStartDate').value = '';
+                    document.getElementById('tourEndDate').value = '';
+                    document.getElementById('tourStatus').value = '';
+                    document.getElementById('tourId').value = ''; // Clear hidden ID for new entry
+                    document.getElementById('tourModalLabel').innerText = 'Add New Tour';
+                    saveTourButton.textContent = 'Save'; // Ensure it's 'Save' for new entries
+                    // The modal is shown by the data-bs-target attribute on the add button if coming from the plus button click directly
+                }
+            };
+
+            // Modified saveTour function
+            window.saveTour = function () {
+                var destination = document.getElementById('tourDestination').value;
+                var startDate = document.getElementById('tourStartDate').value;
+                var endDate = document.getElementById('tourEndDate').value;
+                var status = document.getElementById('tourStatus').value;
+                var id = document.getElementById('tourId').value;
+
+                if (id) {
+                    console.log('Updating Tour:', { id, destination, startDate, endDate, status });
+                    // In a real application, send update request to server
+                    // For demo, find and update the row in allTableRows
+                    const rowIndex = allTableRows.findIndex(row => row.cells[0].textContent === id);
+                    if (rowIndex !== -1) {
+                        allTableRows[rowIndex].cells[1].textContent = destination;
+                        allTableRows[rowIndex].cells[2].textContent = startDate;
+                        allTableRows[rowIndex].cells[3].textContent = endDate;
+                        allTableRows[rowIndex].cells[4].textContent = status;
+                    }
+                } else {
+                    console.log('Adding New Tour:', { destination, startDate, endDate, status });
+                    // In a real application, send add request to server
+                    // For demo, create a new row (assign a temporary ID)
+                    const newIdNum = allTableRows.length > 0 ? (Math.max(...allTableRows.map(row => {
+                        const currentId = row.cells[0].textContent;
+                        const num = parseInt(currentId.replace('T', ''));
+                        return isNaN(num) ? 0 : num;
+                    })) + 1) : 1;
+                    const newId = 'T' + String(newIdNum).padStart(3, '0'); // Format as T001, T002 etc.
+
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${newId}</td>
+                        <td>${destination}</td>
+                        <td>${startDate}</td>
+                        <td>${endDate}</td>
+                        <td>${status}</td>
+                    `;
+                    allTableRows.push(newRow); // Add to the master list
+                }
+
+                // Re-apply filters and re-display table to reflect changes
+                applyFilters();
+
+                // Close modal
+                tourModal.hide();
+                // The 'hidden.bs.modal' event listener will handle resetting the button text and form
+            };
+
+            // NEW FUNCTION: Add click event listeners to table rows for editing
+            function addEditEventListeners() {
+                tourTableBody.querySelectorAll('tr').forEach(row => {
+                    // Remove existing listeners to prevent duplicates if displayRows is called multiple times
+                    row.removeEventListener('click', handleRowClick);
+                    // Add the new listener
+                    row.addEventListener('click', handleRowClick);
+                    row.style.cursor = 'pointer'; // Indicate that rows are clickable
+                });
+            }
+
+            function handleRowClick() {
+                const tourId = this.cells[0].textContent;
+                const tourDestination = this.cells[1].textContent;
+                const tourStartDate = this.cells[2].textContent;
+                const tourEndDate = this.cells[3].textContent;
+                const tourStatus = this.cells[4].textContent;
+
+                // Populate and open the modal
+                openEditModal('tour', {
+                    id: tourId,
+                    destination: tourDestination,
+                    startDate: tourStartDate,
+                    endDate: tourEndDate,
+                    status: tourStatus
+                });
+            }
+
+            // Event listener for when the modal is fully hidden
+            tourModalElement.addEventListener('hidden.bs.modal', function () {
+                document.getElementById('tourModalLabel').innerText = 'Add/Edit Tour'; // Reset label
+                saveTourButton.textContent = 'Save'; // Always reset to 'Save' when modal closes
+                document.getElementById('tourForm').reset(); // Clear form fields
+            });
+
+            // Event Listeners for filter inputs (triggering applyFilters on 'input' event)
+            filterTourIdInput.addEventListener('input', applyFilters);
+            filterDestinationInput.addEventListener('input', applyFilters);
+            filterStartDateInput.addEventListener('change', applyFilters); // 'change' for date input
+            filterEndDateInput.addEventListener('change', applyFilters);   // 'change' for date input
+            filterStatusInput.addEventListener('input', applyFilters);
+
+            // Event Listeners for export buttons
+            exportExcelBtn.addEventListener('click', exportToExcel);
+            exportPdfBtn.addEventListener('click', exportToPdf);
+
+            // Event listener for the "Add New Tour" button (plus button)
+            document.querySelector('.btn-primary[data-bs-target="#tourModal"]').addEventListener('click', function () {
+                openEditModal('add'); // Call openEditModal in 'add' mode
+            });
+
+            // Initial application of filters and pagination on page load
+            applyFilters();
+        });
+    </script>
+</body>
+
+</html>
