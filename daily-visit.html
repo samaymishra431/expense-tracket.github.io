@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <style>
         html,
         body {
@@ -318,21 +320,22 @@
             color: white;
         }
 
-        /* Sidebar width for small screens */
         @media (max-width: 767.98px) {
-            /* Adjust this breakpoint if needed for 'sm' screens */
             .offcanvas-start {
                 --bs-offcanvas-width: 80vw;
-                /* Covers half of the viewport width */
             }
         }
 
         @media (min-width: 768px) and (max-width: 991.98px) {
-            /* For medium screens, adjust as desired */
             .offcanvas-start {
                 --bs-offcanvas-width: 40vw;
-                /* Can be adjusted for medium screens */
             }
+        }
+        .filter-card .datepicker.form-control {
+            padding-left: 0.75rem !important;
+        }
+        .datepicker{
+            padding: 6px;
         }
     </style>
 </head>
@@ -341,7 +344,8 @@
     <nav class="navbar bg-white border-bottom d-lg-none py-2 px-3" style="padding-left: 0px !important;">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <button class="btn btn-primary sidebar-toggle-btn me-3" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="background-color: #e0f2fe; border-color: #e0f2fe; color: black">
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation"
+                style="background-color: #e0f2fe; border-color: #e0f2fe; color: black">
                 <i class="fas fa-bars"></i>
             </button>
             <a class="navbar-brand mb-0 h1 flex-grow-1" href="#" style="text-align: center;">Daily Visit</a>
@@ -351,7 +355,7 @@
     <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasNavbar"
         aria-labelledby="offcanvasNavbarLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Navigation</h5>
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Doritech</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
@@ -414,7 +418,8 @@
         </ul>
     </nav>
     <main class="container-fluid my-3 px-2">
-        <div class="filter-card">
+        <!-- Remove the filter card from always visible position -->
+        <div class="filter-card" style="display: none;">
             <h6 class="mb-3">Filter Visits</h6>
             <div class="row g-3">
                 <div class="col-md-2 col-sm-6">
@@ -427,11 +432,11 @@
                 </div>
                 <div class="col-md-2 col-sm-6">
                     <label for="filterStartDate" class="form-label visually-hidden">Start Date</label>
-                    <input type="date" class="form-control" id="filterStartDate" placeholder="Start Date">
+                    <input type="text" class="form-control datepicker" id="filterStartDate" placeholder="Start Date">
                 </div>
                 <div class="col-md-2 col-sm-6">
                     <label for="filterEndDate" class="form-label visually-hidden">End Date</label>
-                    <input type="date" class="form-control" id="filterEndDate" placeholder="End Date">
+                    <input type="text" class="form-control datepicker" id="filterEndDate" placeholder="End Date">
                 </div>
                 <div class="col-md-2 col-sm-6">
                     <label for="filterLocationVisited" class="form-label visually-hidden">Location Visited</label>
@@ -449,6 +454,10 @@
             style="background-color: #e0f2fe; border: 1px solid #dee2e6; border-bottom: 1px solid #bfdbfe; border-radius: 0.375rem 0.375rem 0 0;">
             <h5 class="mb-0">Daily Visit Records</h5>
             <div class="d-flex">
+                <button id="toggleFilterBtn" class="btn btn-outline-secondary btn-sm me-2" title="Show Filters"
+                    style="z-index:2;">
+                    <i class="fas fa-filter"></i>
+                </button>
                 <button class="btn btn-success btn-sm me-2" id="exportExcelBtn" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="Export to Excel">
                     <i class="fas fa-file-excel"></i>
@@ -571,11 +580,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="visitStartDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="visitStartDate" required>
+                            <input type="text" class="form-control datepicker" id="visitStartDate" required>
                         </div>
                         <div class="mb-3">
                             <label for="visitEndDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="visitEndDate" required>
+                            <input type="text" class="form-control datepicker" id="visitEndDate" required>
                         </div>
                         <div class="mb-3">
                             <label for="visitLocation" class="form-label">Location Visited</label>
@@ -632,6 +641,9 @@
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const filterVisitIdInput = document.getElementById('filterVisitId');
@@ -660,6 +672,14 @@
             // Initialize tooltips
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            // Initialize datepickers
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true,
+                orientation: 'bottom auto' // Adjust as needed
+            });
 
             // Function to display rows for the current page
             function displayRows(rows) {
@@ -866,8 +886,9 @@
             window.openEditModal = function (type, data) {
                 if (type === 'visit') {
                     document.getElementById('visitTourId').value = data.tourId;
-                    document.getElementById('visitStartDate').value = data.startDate;
-                    document.getElementById('visitEndDate').value = data.endDate;
+                    // Set datepicker values for modal input fields
+                    $('#visitStartDate').datepicker('setDate', data.startDate);
+                    $('#visitEndDate').datepicker('setDate', data.endDate);
                     document.getElementById('visitLocation').value = data.location;
                     document.getElementById('visitPurpose').value = data.purpose;
                     document.getElementById('visitNotes').value = data.notes;
@@ -877,8 +898,9 @@
                     visitModal.show();
                 } else { // This is for 'add new' mode (when the plus button is clicked)
                     document.getElementById('visitTourId').value = '';
-                    document.getElementById('visitStartDate').value = '';
-                    document.getElementById('visitEndDate').value = '';
+                    // Clear datepicker values for modal input fields
+                    $('#visitStartDate').datepicker('clearDates');
+                    $('#visitEndDate').datepicker('clearDates');
                     document.getElementById('visitLocation').value = '';
                     document.getElementById('visitPurpose').value = '';
                     document.getElementById('visitNotes').value = '';
@@ -975,13 +997,17 @@
                 document.getElementById('visitModalLabel').innerText = 'Add/Edit Visit'; // Reset label
                 saveVisitButton.textContent = 'Save'; // Always reset to 'Save' when modal closes
                 document.getElementById('visitForm').reset(); // Clear form fields
+                // Clear datepicker values on modal close
+                $('#visitStartDate').datepicker('clearDates');
+                $('#visitEndDate').datepicker('clearDates');
             });
 
             // Event Listeners for filter inputs (triggering applyFilters on 'input' or 'change' event)
             filterVisitIdInput.addEventListener('input', applyFilters);
             filterTourIdInput.addEventListener('input', applyFilters);
-            filterStartDateInput.addEventListener('change', applyFilters);
-            filterEndDateInput.addEventListener('change', applyFilters);
+            // Listen for 'change' event from datepicker
+            $('#filterStartDate').on('change', applyFilters);
+            $('#filterEndDate').on('change', applyFilters);
             filterLocationVisitedInput.addEventListener('input', applyFilters);
             filterPurposeInput.addEventListener('input', applyFilters);
 
@@ -993,6 +1019,19 @@
             // Event listener for the "Add New Visit" button (plus button)
             document.querySelector('.btn-primary[data-bs-target="#visitModal"]').addEventListener('click', function () {
                 openEditModal('add'); // Call openEditModal in 'add' mode
+            });
+
+            // Hide filter card by default and toggle on filter icon click
+            const filterCard = document.querySelector('.filter-card');
+            const toggleFilterBtn = document.getElementById('toggleFilterBtn');
+            toggleFilterBtn.addEventListener('click', function () {
+                if (filterCard.style.display === 'none' || filterCard.style.display === '') {
+                    filterCard.style.display = 'block';
+                    toggleFilterBtn.classList.add('active');
+                } else {
+                    filterCard.style.display = 'none';
+                    toggleFilterBtn.classList.remove('active');
+                }
             });
 
             // Initial application of filters and pagination on page load

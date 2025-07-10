@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Add Bootstrap Datepicker CSS -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <style>
         html,
         body {
@@ -334,6 +337,12 @@
                 /* Can be adjusted for medium screens */
             }
         }
+                .filter-card .datepicker.form-control {
+            padding-left: 0.75rem !important;
+        }
+        .datepicker{
+            padding: 6px;
+        }
     </style>
 </head>
 
@@ -351,7 +360,7 @@
     <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasNavbar"
         aria-labelledby="offcanvasNavbarLabel">
         <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Navigation</h5>
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Doritech</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
@@ -414,7 +423,8 @@
         </ul>
     </nav>
     <main class="container-fluid my-3 px-2">
-        <div class="filter-card">
+        <!-- Remove the old filter button row above filter card -->
+        <div class="filter-card" style="display: none;">
             <h6 class="mb-3">Filter Expenses</h6>
             <div class="row g-3">
                 <div class="col-md-2 col-sm-6">
@@ -435,11 +445,11 @@
                 </div>
                 <div class="col-md-2 col-sm-6">
                     <label for="filterStartDate" class="form-label visually-hidden">Start Date</label>
-                    <input type="date" class="form-control" id="filterStartDate" placeholder="Start Date">
+                    <input type="text" class="form-control datepicker" id="filterStartDate" placeholder="Start Date">
                 </div>
                 <div class="col-md-2 col-sm-6">
                     <label for="filterEndDate" class="form-label visually-hidden">End Date</label>
-                    <input type="date" class="form-control" id="filterEndDate" placeholder="End Date">
+                    <input type="text" class="form-control datepicker" id="filterEndDate" placeholder="End Date">
                 </div>
             </div>
         </div>
@@ -448,6 +458,9 @@
             style="background-color: #e0f2fe; border: 1px solid #dee2e6; border-bottom: 1px solid #bfdbfe; border-radius: 0.375rem 0.375rem 0 0;">
             <h5 class="mb-0">Expenses</h5>
             <div class="d-flex">
+                <button id="toggleFilterBtn" class="btn btn-outline-secondary btn-sm me-2" title="Show Filters" style="z-index:2;">
+                    <i class="fas fa-filter"></i>
+                </button>
                 <button class="btn btn-success btn-sm me-2" id="exportExcelBtn" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="Export to Excel">
                     <i class="fas fa-file-excel"></i>
@@ -594,11 +607,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="expenseStartDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="expenseStartDate" required>
+                            <input type="text" class="form-control datepicker" id="expenseStartDate" required>
                         </div>
                         <div class="mb-3">
                             <label for="expenseEndDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="expenseEndDate" required>
+                            <input type="text" class="form-control datepicker" id="expenseEndDate" required>
                         </div>
                         <input type="hidden" id="expenseId">
                     </form>
@@ -643,12 +656,17 @@
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <!-- Add jQuery and Bootstrap Datepicker JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const filterExpenseIdInput = document.getElementById('filterExpenseId');
             const filterTourIdInput = document.getElementById('filterTourId');
             const filterVisitIdInput = document.getElementById('filterVisitId');
             const filterExpenseTypeInput = document.getElementById('filterExpenseType');
+            // FIX: Define date filter inputs
             const filterStartDateInput = document.getElementById('filterStartDate');
             const filterEndDateInput = document.getElementById('filterEndDate');
             const expenseTableBody = document.querySelector('#expenseTable tbody');
@@ -671,6 +689,14 @@
             // Initialize tooltips
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            // Initialize datepickers (add this block)
+            $('.datepicker').datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayHighlight: true,
+                orientation: 'bottom auto'
+            });
 
             // Function to display rows for the current page
             function displayRows(rows) {
@@ -881,21 +907,23 @@
                     document.getElementById('expenseType').value = data.expenseType;
                     document.getElementById('expenseDescription').value = data.description;
                     document.getElementById('expenseAmount').value = data.amount;
-                    document.getElementById('expenseStartDate').value = data.startDate;
-                    document.getElementById('expenseEndDate').value = data.endDate;
+                    // Set datepicker values for modal input fields
+                    $('#expenseStartDate').datepicker('setDate', data.startDate);
+                    $('#expenseEndDate').datepicker('setDate', data.endDate);
                     document.getElementById('expenseId').value = data.id;
                     document.getElementById('expenseModalLabel').innerText = 'Edit Expense';
                     saveExpenseButton.textContent = 'Update'; // Change button text for edit mode
                     expenseModal.show();
-                } else { // This is for 'add new' mode (when the plus button is clicked)
+                } else {
                     document.getElementById('expenseTourId').value = '';
                     document.getElementById('expenseVisitId').value = '';
                     document.getElementById('expenseType').value = '';
                     document.getElementById('expenseDescription').value = '';
                     document.getElementById('expenseAmount').value = '';
-                    document.getElementById('expenseStartDate').value = '';
-                    document.getElementById('expenseEndDate').value = '';
-                    document.getElementById('expenseId').value = ''; // Clear hidden ID for new entry
+                    // Clear datepicker values for modal input fields
+                    $('#expenseStartDate').datepicker('clearDates');
+                    $('#expenseEndDate').datepicker('clearDates');
+                    document.getElementById('expenseId').value = '';
                     document.getElementById('expenseModalLabel').innerText = 'Add New Expense';
                     saveExpenseButton.textContent = 'Save'; // Ensure it's 'Save' for new entries
                     // The modal is shown by the data-bs-target attribute on the add button if coming from the plus button click directly
@@ -993,6 +1021,9 @@
                 document.getElementById('expenseModalLabel').innerText = 'Add/Edit Expense'; // Reset label
                 saveExpenseButton.textContent = 'Save'; // Always reset to 'Save' when modal closes
                 document.getElementById('expenseForm').reset(); // Clear form fields
+                // Clear datepicker values on modal close
+                $('#expenseStartDate').datepicker('clearDates');
+                $('#expenseEndDate').datepicker('clearDates');
             });
 
             // Event Listeners for filter inputs (triggering applyFilters on 'input' or 'change' event)
@@ -1000,8 +1031,9 @@
             filterTourIdInput.addEventListener('input', applyFilters);
             filterVisitIdInput.addEventListener('input', applyFilters);
             filterExpenseTypeInput.addEventListener('input', applyFilters);
-            filterStartDateInput.addEventListener('change', applyFilters);
-            filterEndDateInput.addEventListener('change', applyFilters);
+            // Use jQuery for datepicker change events
+            $('#filterStartDate').on('change', applyFilters);
+            $('#filterEndDate').on('change', applyFilters);
 
 
             // Event Listeners for export buttons
@@ -1011,6 +1043,19 @@
             // Event listener for the "Add New Expense" button (plus button)
             document.querySelector('.btn-primary[data-bs-target="#expenseModal"]').addEventListener('click', function () {
                 openEditModal('add'); // Call openEditModal in 'add' mode
+            });
+
+            // Hide filter card by default and toggle on filter icon click
+            const filterCard = document.querySelector('.filter-card');
+            const toggleFilterBtn = document.getElementById('toggleFilterBtn');
+            toggleFilterBtn.addEventListener('click', function () {
+                if (filterCard.style.display === 'none' || filterCard.style.display === '') {
+                    filterCard.style.display = 'block';
+                    toggleFilterBtn.classList.add('active');
+                } else {
+                    filterCard.style.display = 'none';
+                    toggleFilterBtn.classList.remove('active');
+                }
             });
 
             // Initial application of filters and pagination on page load
