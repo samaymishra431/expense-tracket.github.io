@@ -7,7 +7,7 @@
     <title>Expenses</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         html,
@@ -26,7 +26,7 @@
             flex: 1 0 auto;
         }
 
-        /* Tab content */
+        /* Tab content - largely for larger screens now */
         .tab-content {
             background: #fff;
             border: 1px solid #dee2e6;
@@ -40,10 +40,8 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            /* Added border-radius for the whole table */
             border-radius: 0.375rem;
             overflow: hidden;
-            /* Ensures inner content respects border-radius */
             border: 1px solid #dee2e6;
         }
 
@@ -80,7 +78,6 @@
             border-top-right-radius: 0.375rem;
         }
 
-
         table.data-table tbody tr:nth-child(even) {
             background-color: #f8f9fa;
         }
@@ -107,16 +104,12 @@
         /* Pagination row in table footer */
         table.data-table tfoot tr.pagination-row td {
             background-color: white;
-            /* Light background for pagination row */
             border-top: 1px solid #dee2e6;
             padding: 0.75rem;
             text-align: right;
-            /* Align pagination to right */
-            /* Bottom corners for the table footer */
             border-bottom-left-radius: 0.375rem;
             border-bottom-right-radius: 0.375rem;
         }
-
 
         /* Bottom footer */
         footer.footer {
@@ -133,7 +126,6 @@
             z-index: 10;
             width: 100%;
             margin-top: auto;
-            /* Pushes footer to the bottom */
         }
 
         footer.footer a {
@@ -211,15 +203,12 @@
             border-radius: 0.375rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            /* Space below the filter card */
         }
 
         /* Pagination styling within the table footer */
         .pagination-in-table {
             display: inline-flex;
-            /* Use inline-flex for horizontal alignment of pagination items */
             margin-bottom: 0;
-            /* Remove default ul margin */
         }
 
         .pagination-in-table .page-link {
@@ -227,9 +216,7 @@
             border: 1px solid #dee2e6;
             border-radius: 0.25rem;
             margin: 0 2px;
-            /* Spacing between buttons */
             padding: 0.375rem 0.75rem;
-            /* Bootstrap default padding */
         }
 
         .pagination-in-table .page-item.active .page-link {
@@ -247,11 +234,157 @@
             background-color: #e0f2fe;
             border-bottom: 1px solid #bfdbfe;
         }
+
+        /* Custom styles for sidebar */
+        /* Hide regular nav on small screens */
+        .navbar-top-lg {
+            display: none;
+        }
+
+        /* Show regular nav on large screens */
+        @media (min-width: 992px) {
+            .navbar-top-lg {
+                display: block;
+            }
+
+            .sidebar-toggle-btn {
+                display: none !important;
+            }
+        }
+
+        /* Offcanvas Specific Overrides */
+        /* Set background of offcanvas to black shade */
+        .offcanvas.bg-dark {
+            background-color: #212529 !important;
+            /* A slightly lighter black than pure #000 */
+        }
+
+        /* Set header background for offcanvas */
+        .offcanvas-header {
+            background-color: #343a40 !important;
+            /* A slightly lighter shade for the header */
+            border-bottom: 1px solid #495057;
+            color: white;
+            /* Ensure text is visible */
+        }
+
+        .offcanvas-title {
+            color: white;
+        }
+
+        .offcanvas-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+            /* Make close button white */
+        }
+
+        /* Set text color for nav links in offcanvas */
+        .offcanvas-body .nav-link {
+            padding: 0.75rem 1rem;
+            color: #f8f9fa;
+            /* Light gray for text */
+            font-weight: 500;
+            border-radius: 0.375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Hover and active states for offcanvas nav links */
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link.active {
+            background-color: #343a40;
+            /* Bootstrap primary blue */
+            color: white;
+        }
+
+        /* Dropdown specific styles within offcanvas */
+        .offcanvas-body .dropdown-item {
+            padding-left: 1.5rem;
+            color: #f8f9fa;
+            /* Light text for dropdown items */
+            background-color: transparent;
+            /* Ensure transparent background initially */
+        }
+
+        .offcanvas-body .dropdown-menu {
+            background-color: #2c3034;
+            /* Slightly lighter dark for dropdown menu */
+            border: none;
+            box-shadow: none;
+        }
+
+        .offcanvas-body .dropdown-item:hover,
+        .offcanvas-body .dropdown-item.active {
+            background-color: #343a40;
+            /* Darker blue for hover/active */
+            color: white;
+        }
+
+        /* Sidebar width for small screens */
+        @media (max-width: 767.98px) {
+            /* Adjust this breakpoint if needed for 'sm' screens */
+            .offcanvas-start {
+                --bs-offcanvas-width: 80vw;
+                /* Covers half of the viewport width */
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            /* For medium screens, adjust as desired */
+            .offcanvas-start {
+                --bs-offcanvas-width: 40vw;
+                /* Can be adjusted for medium screens */
+            }
+        }
     </style>
 </head>
 
 <body>
-    <nav class="bg-white border-bottom">
+    <nav class="navbar bg-white border-bottom d-lg-none py-2 px-3" style="padding-left: 0px !important;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary sidebar-toggle-btn me-3" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="background-color: #e0f2fe; border-color: #e0f2fe; color: black">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand mb-0 h1 flex-grow-1" href="#" style="text-align: center;">Expenses</a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasNavbar"
+        aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Navigation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="masterDropdownOffcanvas" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Master
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-sm bg-dark" aria-labelledby="masterDropdownOffcanvas">
+                        <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
+                        <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
+                        <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                        <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tour-management.html">Tour Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="daily-visit.html">Visit</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="expenses.html">Expenses</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <nav class="bg-white border-bottom navbar-top-lg">
         <ul class="nav nav-tabs container-fluid px-0" id="dashboardTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="dashboard.html" type="button">Dashboard</a>
@@ -264,19 +397,17 @@
                 <ul class="dropdown-menu" aria-labelledby="masterDropdown">
                     <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
                     <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
-                     <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                    <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
                     <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
-                   
-                    
                 </ul>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="tour-management.html" type="button">Tour Management</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" href="daily-visit.html" type="button">Visits</a>
+                <a class="nav-link" href="daily-visit.html" type="button">Visit</a>
             </li>
-          
+
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" href="expenses.html" type="button">Expenses</a>
             </li>
@@ -315,7 +446,7 @@
 
         <div class="d-flex justify-content-between align-items-center px-3 py-2"
             style="background-color: #e0f2fe; border: 1px solid #dee2e6; border-bottom: 1px solid #bfdbfe; border-radius: 0.375rem 0.375rem 0 0;">
-            <h5 class="mb-0">Expenses Records</h5>
+            <h5 class="mb-0">Expenses</h5>
             <div class="d-flex">
                 <button class="btn btn-success btn-sm me-2" id="exportExcelBtn" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="Export to Excel">
@@ -348,104 +479,74 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>EX001</td>
-                        <td>T001</td>
-                        <td>DV001</td>
+                        <td>E001</td>
+                        <td>TR001</td>
+                        <td>V001</td>
                         <td>Travel</td>
-                        <td>Metro fare to Eiffel Tower</td>
-                        <td>$15.00</td>
-                        <td>2024-07-01</td>
-                        <td>2024-07-01</td>
+                        <td>Metro fare to Client A</td>
+                        <td>250.00</td>
+                        <td>2025-07-15</td>
+                        <td>2025-07-15</td>
                     </tr>
                     <tr>
-                        <td>EX002</td>
-                        <td>T001</td>
-                        <td>DV002</td>
+                        <td>E002</td>
+                        <td>TR002</td>
+                        <td>V002</td>
+                        <td>Accommodation</td>
+                        <td>Hotel stay in Mumbai</td>
+                        <td>3500.00</td>
+                        <td>2025-07-20</td>
+                        <td>2025-07-22</td>
+                    </tr>
+                    <tr>
+                        <td>E003</td>
+                        <td>TR001</td>
+                        <td>V003</td>
                         <td>Food</td>
-                        <td>Lunch near Louvre</td>
-                        <td>$45.50</td>
-                        <td>2024-07-02</td>
-                        <td>2024-07-02</td>
+                        <td>Lunch during seminar</td>
+                        <td>450.00</td>
+                        <td>2025-07-16</td>
+                        <td>2025-07-16</td>
                     </tr>
                     <tr>
-                        <td>EX003</td>
-                        <td>T002</td>
-                        <td>DV003</td>
-                        <td>Shopping</td>
-                        <td>Souvenirs from Shibuya</td>
-                        <td>$120.00</td>
-                        <td>2024-07-10</td>
-                        <td>2024-07-10</td>
+                        <td>E004</td>
+                        <td>TR003</td>
+                        <td>V004</td>
+                        <td>Training Material</td>
+                        <td>Printed handouts</td>
+                        <td>800.00</td>
+                        <td>2025-07-02</td>
+                        <td>2025-07-02</td>
                     </tr>
                     <tr>
-                        <td>EX004</td>
-                        <td>T002</td>
-                        <td>DV004</td>
-                        <td>Travel</td>
-                        <td>Taxi to Imperial Palace</td>
-                        <td>$30.00</td>
-                        <td>2024-07-11</td>
-                        <td>2024-07-11</td>
+                        <td>E005</td>
+                        <td>TR004</td>
+                        <td>V005</td>
+                        <td>Client Entertainment</td>
+                        <td>Dinner with Client C</td>
+                        <td>1200.00</td>
+                        <td>2025-08-01</td>
+                        <td>2025-08-01</td>
                     </tr>
                     <tr>
-                        <td>EX005</td>
-                        <td>T004</td>
-                        <td>DV005</td>
-                        <td>Entertainment</td>
-                        <td>Opera House tour ticket</td>
-                        <td>$70.00</td>
-                        <td>2024-08-20</td>
-                        <td>2024-08-20</td>
+                        <td>E006</td>
+                        <td>TR002</td>
+                        <td>V006</td>
+                        <td>Miscellaneous</td>
+                        <td>Stationery for meeting</td>
+                        <td>150.00</td>
+                        <td>2025-07-21</td>
+                        <td>2025-07-21</td>
                     </tr>
                     <tr>
-                        <td>EX006</td>
-                        <td>T004</td>
-                        <td>DV006</td>
-                        <td>Sport</td>
-                        <td>Surfboard rental Bondi</td>
-                        <td>$50.00</td>
-                        <td>2024-08-21</td>
-                        <td>2024-08-21</td>
-                    </tr>
-                    <tr>
-                        <td>EX007</td>
-                        <td>T005</td>
-                        <td>DV007</td>
-                        <td>Entrance Fee</td>
-                        <td>Colosseum entry ticket</td>
-                        <td>$25.00</td>
-                        <td>2024-09-01</td>
-                        <td>2024-09-01</td>
-                    </tr>
-                    <tr>
-                        <td>EX008</td>
-                        <td>T005</td>
-                        <td>DV008</td>
-                        <td>Food</td>
-                        <td>Dinner in Rome</td>
-                        <td>$65.00</td>
-                        <td>2024-09-02</td>
-                        <td>2024-09-02</td>
-                    </tr>
-                    <tr>
-                        <td>EX009</td>
-                        <td>T007</td>
-                        <td>DV009</td>
-                        <td>Entertainment</td>
-                        <td>Burj Khalifa At The Top ticket</td>
-                        <td>$100.00</td>
-                        <td>2024-10-01</td>
-                        <td>2024-10-01</td>
-                    </tr>
-                    <tr>
-                        <td>EX010</td>
-                        <td>T007</td>
-                        <td>DV010</td>
-                        <td>Shopping</td>
-                        <td>Electronics at Dubai Mall</td>
-                        <td>$300.00</td>
-                        <td>2024-10-02</td>
-                        <td>2024-10-02</td>
+                        <td>E007</td>
+                        <td>TR005</td>
+                        <td>V007</td>
+                        <td>Fuel</td>
+                        <td>Petrol for local travel</td>
+                        <td>700.00</td>
+                        <td>2025-06-26</td>
+                        <td>2025-06-26</td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -477,7 +578,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="expenseVisitId" class="form-label">Visit ID</label>
-                            <input type="text" class="form-control" id="expenseVisitId" required>
+                            <input type="text" class="form-control" id="expenseVisitId">
                         </div>
                         <div class="mb-3">
                             <label for="expenseType" class="form-label">Expense Type</label>
@@ -485,7 +586,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="expenseDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="expenseDescription" rows="3"></textarea>
+                            <textarea class="form-control" id="expenseDescription" rows="2"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="expenseAmount" class="form-label">Amount</label>
@@ -499,7 +600,7 @@
                             <label for="expenseEndDate" class="form-label">End Date</label>
                             <input type="date" class="form-control" id="expenseEndDate" required>
                         </div>
-                        <input type="hidden" id="expenseEntryId">
+                        <input type="hidden" id="expenseId">
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -511,13 +612,14 @@
     </div>
 
     <footer class="footer container-fluid px-2">
-        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software Solutions</a>. All rights
+        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software
+                Solutions</a>. All rights
             reserved.</div>
         <div class="control-buttons">
             <a href="dashboard.html" title="Home" aria-label="Home">
                 <button type="button" class="btn btn-primary btn-round">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house"
-                        viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-house" viewBox="0 0 16 16">
                         <path
                             d="M8 3.293l6 6V13.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V10H6v3.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V9.293l6-6z" />
                         <path fill-rule="evenodd"
@@ -547,8 +649,8 @@
             const filterTourIdInput = document.getElementById('filterTourId');
             const filterVisitIdInput = document.getElementById('filterVisitId');
             const filterExpenseTypeInput = document.getElementById('filterExpenseType');
-            const filterStartDateInput = document.getElementById('filterStartDate'); // Changed from filterExpenseDateInput
-            const filterEndDateInput = document.getElementById('filterEndDate');     // New end date filter
+            const filterStartDateInput = document.getElementById('filterStartDate');
+            const filterEndDateInput = document.getElementById('filterEndDate');
             const expenseTableBody = document.querySelector('#expenseTable tbody');
             const expenseTable = document.getElementById('expenseTable');
             const paginationContainer = document.getElementById('pagination');
@@ -692,41 +794,28 @@
                 const tourIdFilter = filterTourIdInput.value.toLowerCase();
                 const visitIdFilter = filterVisitIdInput.value.toLowerCase();
                 const expenseTypeFilter = filterExpenseTypeInput.value.toLowerCase();
-                const startDateFilter = filterStartDateInput.value; // Get start date filter
-                const endDateFilter = filterEndDateInput.value;     // Get end date filter
+                const startDateFilter = filterStartDateInput.value;
+                const endDateFilter = filterEndDateInput.value;
+
 
                 filteredRows = allTableRows.filter(row => {
                     const expenseId = row.cells[0].textContent.toLowerCase();
                     const tourId = row.cells[1].textContent.toLowerCase();
                     const visitId = row.cells[2].textContent.toLowerCase();
                     const expenseType = row.cells[3].textContent.toLowerCase();
-                    const rowStartDate = row.cells[6].textContent; // Start Date is in the 7th column (index 6)
-                    const rowEndDate = row.cells[7].textContent;   // End Date is in the 8th column (index 7)
+                    const startDate = row.cells[6].textContent; // YYYY-MM-DD
+                    const endDate = row.cells[7].textContent; // YYYY-MM-DD
+
 
                     const idMatch = expenseId.includes(expenseIdFilter);
                     const tourIdMatch = tourId.includes(tourIdFilter);
                     const visitIdMatch = visitId.includes(visitIdFilter);
                     const typeMatch = expenseType.includes(expenseTypeFilter);
-
-                    // Date range filtering logic
-                    let dateRangeMatch = true;
-                    if (startDateFilter !== '' && rowStartDate < startDateFilter) {
-                        dateRangeMatch = false; // Expense starts before the filter start date
-                    }
-                    if (endDateFilter !== '' && rowEndDate > endDateFilter) {
-                        dateRangeMatch = false; // Expense ends after the filter end date
-                    }
-                    // If only start date is provided, filter for dates on or after start date
-                    if (startDateFilter !== '' && endDateFilter === '' && rowStartDate < startDateFilter) {
-                        dateRangeMatch = false;
-                    }
-                    // If only end date is provided, filter for dates on or before end date
-                    if (endDateFilter !== '' && startDateFilter === '' && rowEndDate > endDateFilter) {
-                        dateRangeMatch = false;
-                    }
+                    const startDateMatch = !startDateFilter || startDate >= startDateFilter;
+                    const endDateMatch = !endDateFilter || endDate <= endDateFilter;
 
 
-                    return idMatch && tourIdMatch && visitIdMatch && typeMatch && dateRangeMatch;
+                    return idMatch && tourIdMatch && visitIdMatch && typeMatch && startDateMatch && endDateMatch;
                 });
 
                 currentPage = 1; // Reset to first page on new filter
@@ -750,8 +839,8 @@
 
                 const ws = XLSX.utils.aoa_to_sheet(ws_data);
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Expenses Details");
-                XLSX.writeFile(wb, "Expenses_Details.xlsx");
+                XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+                XLSX.writeFile(wb, "Expenses.xlsx");
             }
 
             // Function to export to PDF
@@ -768,8 +857,8 @@
                     body: data,
                     startY: 20,
                     styles: {
-                        fontSize: 10,
-                        cellPadding: 3,
+                        fontSize: 8,
+                        cellPadding: 2,
                     },
                     headStyles: {
                         fillColor: [233, 242, 255], // #e9f2ff
@@ -781,7 +870,7 @@
                     }
                 });
 
-                doc.save("Expenses_Details.pdf");
+                doc.save("Expenses.pdf");
             }
 
             // Expense Modal functions
@@ -791,10 +880,10 @@
                     document.getElementById('expenseVisitId').value = data.visitId;
                     document.getElementById('expenseType').value = data.expenseType;
                     document.getElementById('expenseDescription').value = data.description;
-                    document.getElementById('expenseAmount').value = parseFloat(data.amount.replace('$', '')); // Remove '$' and parse as float
-                    document.getElementById('expenseStartDate').value = data.startDate; // Changed from expenseDate
-                    document.getElementById('expenseEndDate').value = data.endDate;     // New end date field
-                    document.getElementById('expenseEntryId').value = data.id; // Use expenseEntryId for hidden ID
+                    document.getElementById('expenseAmount').value = data.amount;
+                    document.getElementById('expenseStartDate').value = data.startDate;
+                    document.getElementById('expenseEndDate').value = data.endDate;
+                    document.getElementById('expenseId').value = data.id;
                     document.getElementById('expenseModalLabel').innerText = 'Edit Expense';
                     saveExpenseButton.textContent = 'Update'; // Change button text for edit mode
                     expenseModal.show();
@@ -804,9 +893,9 @@
                     document.getElementById('expenseType').value = '';
                     document.getElementById('expenseDescription').value = '';
                     document.getElementById('expenseAmount').value = '';
-                    document.getElementById('expenseStartDate').value = ''; // Changed from expenseDate
-                    document.getElementById('expenseEndDate').value = '';     // New end date field
-                    document.getElementById('expenseEntryId').value = ''; // Clear hidden ID for new entry
+                    document.getElementById('expenseStartDate').value = '';
+                    document.getElementById('expenseEndDate').value = '';
+                    document.getElementById('expenseId').value = ''; // Clear hidden ID for new entry
                     document.getElementById('expenseModalLabel').innerText = 'Add New Expense';
                     saveExpenseButton.textContent = 'Save'; // Ensure it's 'Save' for new entries
                     // The modal is shown by the data-bs-target attribute on the add button if coming from the plus button click directly
@@ -818,14 +907,14 @@
                 var tourId = document.getElementById('expenseTourId').value;
                 var visitId = document.getElementById('expenseVisitId').value;
                 var expenseType = document.getElementById('expenseType').value;
-                var expenseDescription = document.getElementById('expenseDescription').value;
-                var expenseAmount = parseFloat(document.getElementById('expenseAmount').value).toFixed(2); // Format to 2 decimal places
-                var expenseStartDate = document.getElementById('expenseStartDate').value; // Changed from expenseDate
-                var expenseEndDate = document.getElementById('expenseEndDate').value;     // New end date field
-                var id = document.getElementById('expenseEntryId').value; // Use expenseEntryId for hidden ID
+                var description = document.getElementById('expenseDescription').value;
+                var amount = parseFloat(document.getElementById('expenseAmount').value).toFixed(2);
+                var startDate = document.getElementById('expenseStartDate').value;
+                var endDate = document.getElementById('expenseEndDate').value;
+                var id = document.getElementById('expenseId').value;
 
                 if (id) {
-                    console.log('Updating Expense:', { id, tourId, visitId, expenseType, expenseDescription, expenseAmount, expenseStartDate, expenseEndDate });
+                    console.log('Updating Expense:', { id, tourId, visitId, expenseType, description, amount, startDate, endDate });
                     // In a real application, send update request to server
                     // For demo, find and update the row in allTableRows
                     const rowIndex = allTableRows.findIndex(row => row.cells[0].textContent === id);
@@ -833,32 +922,26 @@
                         allTableRows[rowIndex].cells[1].textContent = tourId;
                         allTableRows[rowIndex].cells[2].textContent = visitId;
                         allTableRows[rowIndex].cells[3].textContent = expenseType;
-                        allTableRows[rowIndex].cells[4].textContent = expenseDescription;
-                        allTableRows[rowIndex].cells[5].textContent = `$${expenseAmount}`; // Add '$' back for display
-                        allTableRows[rowIndex].cells[6].textContent = expenseStartDate; // Update start date column
-                        allTableRows[rowIndex].cells[7].textContent = expenseEndDate;   // Update end date column
+                        allTableRows[rowIndex].cells[4].textContent = description;
+                        allTableRows[rowIndex].cells[5].textContent = amount;
+                        allTableRows[rowIndex].cells[6].textContent = startDate;
+                        allTableRows[rowIndex].cells[7].textContent = endDate;
                     }
                 } else {
-                    console.log('Adding New Expense:', { tourId, visitId, expenseType, expenseDescription, expenseAmount, expenseStartDate, expenseEndDate });
+                    console.log('Adding New Expense:', { tourId, visitId, expenseType, description, amount, startDate, endDate });
                     // In a real application, send add request to server
                     // For demo, create a new row (assign a temporary ID)
-                    const newIdNum = allTableRows.length > 0 ? (Math.max(...allTableRows.map(row => {
-                        const currentId = row.cells[0].textContent;
-                        const num = parseInt(currentId.replace('EX', ''));
-                        return isNaN(num) ? 0 : num;
-                    })) + 1) : 1;
-                    const newId = 'EX' + String(newIdNum).padStart(3, '0'); // Format as EX001, EX002 etc.
-
+                    const newId = allTableRows.length > 0 ? (Math.max(...allTableRows.map(row => parseInt(row.cells[0].textContent.replace('E', '')))) + 1) : 1;
                     const newRow = document.createElement('tr');
                     newRow.innerHTML = `
-                        <td>${newId}</td>
+                        <td>E${newId.toString().padStart(3, '0')}</td>
                         <td>${tourId}</td>
                         <td>${visitId}</td>
                         <td>${expenseType}</td>
-                        <td>${expenseDescription}</td>
-                        <td>$${expenseAmount}</td>
-                        <td>${expenseStartDate}</td>
-                        <td>${expenseEndDate}</td>
+                        <td>${description}</td>
+                        <td>${amount}</td>
+                        <td>${startDate}</td>
+                        <td>${endDate}</td>
                     `;
                     allTableRows.push(newRow); // Add to the master list
                 }
@@ -887,10 +970,10 @@
                 const tourId = this.cells[1].textContent;
                 const visitId = this.cells[2].textContent;
                 const expenseType = this.cells[3].textContent;
-                const expenseDescription = this.cells[4].textContent;
-                const expenseAmount = this.cells[5].textContent;
-                const expenseStartDate = this.cells[6].textContent; // Get start date from table
-                const expenseEndDate = this.cells[7].textContent;   // Get end date from table
+                const description = this.cells[4].textContent;
+                const amount = this.cells[5].textContent;
+                const startDate = this.cells[6].textContent;
+                const endDate = this.cells[7].textContent;
 
                 // Populate and open the modal
                 openEditModal('expense', {
@@ -898,10 +981,10 @@
                     tourId: tourId,
                     visitId: visitId,
                     expenseType: expenseType,
-                    description: expenseDescription,
-                    amount: expenseAmount,
-                    startDate: expenseStartDate, // Pass start date
-                    endDate: expenseEndDate      // Pass end date
+                    description: description,
+                    amount: amount,
+                    startDate: startDate,
+                    endDate: endDate
                 });
             }
 
@@ -912,13 +995,14 @@
                 document.getElementById('expenseForm').reset(); // Clear form fields
             });
 
-            // Event Listeners for filter inputs (triggering applyFilters on 'input' event)
+            // Event Listeners for filter inputs (triggering applyFilters on 'input' or 'change' event)
             filterExpenseIdInput.addEventListener('input', applyFilters);
             filterTourIdInput.addEventListener('input', applyFilters);
             filterVisitIdInput.addEventListener('input', applyFilters);
             filterExpenseTypeInput.addEventListener('input', applyFilters);
-            filterStartDateInput.addEventListener('change', applyFilters); // 'change' for date input
-            filterEndDateInput.addEventListener('change', applyFilters);   // 'change' for date input
+            filterStartDateInput.addEventListener('change', applyFilters);
+            filterEndDateInput.addEventListener('change', applyFilters);
+
 
             // Event Listeners for export buttons
             exportExcelBtn.addEventListener('click', exportToExcel);

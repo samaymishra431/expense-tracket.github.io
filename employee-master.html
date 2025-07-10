@@ -26,7 +26,7 @@
             flex: 1 0 auto;
         }
 
-        /* Tab content */
+        /* Tab content - largely for larger screens now */
         .tab-content {
             background: #fff;
             border: 1px solid #dee2e6;
@@ -40,10 +40,8 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            /* Added border-radius for the whole table */
             border-radius: 0.375rem;
             overflow: hidden;
-            /* Ensures inner content respects border-radius */
             border: 1px solid #dee2e6;
         }
 
@@ -80,7 +78,6 @@
             border-top-right-radius: 0.375rem;
         }
 
-
         table.data-table tbody tr:nth-child(even) {
             background-color: #f8f9fa;
         }
@@ -107,16 +104,12 @@
         /* Pagination row in table footer */
         table.data-table tfoot tr.pagination-row td {
             background-color: white;
-            /* Light background for pagination row */
             border-top: 1px solid #dee2e6;
             padding: 0.75rem;
             text-align: right;
-            /* Align pagination to right */
-            /* Bottom corners for the table footer */
             border-bottom-left-radius: 0.375rem;
             border-bottom-right-radius: 0.375rem;
         }
-
 
         /* Bottom footer */
         footer.footer {
@@ -133,7 +126,6 @@
             z-index: 10;
             width: 100%;
             margin-top: auto;
-            /* Pushes footer to the bottom */
         }
 
         footer.footer a {
@@ -211,15 +203,12 @@
             border-radius: 0.375rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            /* Space below the filter card */
         }
 
         /* Pagination styling within the table footer */
         .pagination-in-table {
             display: inline-flex;
-            /* Use inline-flex for horizontal alignment of pagination items */
             margin-bottom: 0;
-            /* Remove default ul margin */
         }
 
         .pagination-in-table .page-link {
@@ -227,9 +216,7 @@
             border: 1px solid #dee2e6;
             border-radius: 0.25rem;
             margin: 0 2px;
-            /* Spacing between buttons */
             padding: 0.375rem 0.75rem;
-            /* Bootstrap default padding */
         }
 
         .pagination-in-table .page-item.active .page-link {
@@ -247,11 +234,157 @@
             background-color: #e0f2fe;
             border-bottom: 1px solid #bfdbfe;
         }
+
+        /* Custom styles for sidebar */
+        /* Hide regular nav on small screens */
+        .navbar-top-lg {
+            display: none;
+        }
+
+        /* Show regular nav on large screens */
+        @media (min-width: 992px) {
+            .navbar-top-lg {
+                display: block;
+            }
+
+            .sidebar-toggle-btn {
+                display: none !important;
+            }
+        }
+
+        /* Offcanvas Specific Overrides */
+        /* Set background of offcanvas to black shade */
+        .offcanvas.bg-dark {
+            background-color: #212529 !important;
+            /* A slightly lighter black than pure #000 */
+        }
+
+        /* Set header background for offcanvas */
+        .offcanvas-header {
+            background-color: #343a40 !important;
+            /* A slightly lighter shade for the header */
+            border-bottom: 1px solid #495057;
+            color: white;
+            /* Ensure text is visible */
+        }
+
+        .offcanvas-title {
+            color: white;
+        }
+
+        .offcanvas-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+            /* Make close button white */
+        }
+
+        /* Set text color for nav links in offcanvas */
+        .offcanvas-body .nav-link {
+            padding: 0.75rem 1rem;
+            color: #f8f9fa;
+            /* Light gray for text */
+            font-weight: 500;
+            border-radius: 0.375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Hover and active states for offcanvas nav links */
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link.active {
+            background-color: #343a40;
+            /* Bootstrap primary blue */
+            color: white;
+        }
+
+        /* Dropdown specific styles within offcanvas */
+        .offcanvas-body .dropdown-item {
+            padding-left: 1.5rem;
+            color: #f8f9fa;
+            /* Light text for dropdown items */
+            background-color: transparent;
+            /* Ensure transparent background initially */
+        }
+
+        .offcanvas-body .dropdown-menu {
+            background-color: #2c3034;
+            /* Slightly lighter dark for dropdown menu */
+            border: none;
+            box-shadow: none;
+        }
+
+        .offcanvas-body .dropdown-item:hover,
+        .offcanvas-body .dropdown-item.active {
+            background-color: #343a40;
+            /* Darker blue for hover/active */
+            color: white;
+        }
+
+        /* Sidebar width for small screens */
+        @media (max-width: 767.98px) {
+            /* Adjust this breakpoint if needed for 'sm' screens */
+            .offcanvas-start {
+                --bs-offcanvas-width: 80vw;
+                /* Covers half of the viewport width */
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            /* For medium screens, adjust as desired */
+            .offcanvas-start {
+                --bs-offcanvas-width: 40vw;
+                /* Can be adjusted for medium screens */
+            }
+        }
     </style>
 </head>
 
 <body>
-    <nav class="bg-white border-bottom">
+    <nav class="navbar bg-white border-bottom d-lg-none py-2 px-3" style="padding-left: 0px !important;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary sidebar-toggle-btn me-3" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="background-color: #e0f2fe; border-color: #e0f2fe; color: black">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand mb-0 h1 flex-grow-1" href="#" style="text-align: center;">Employee Master</a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasNavbar"
+        aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Navigation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" id="masterDropdownOffcanvas" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Master
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-sm bg-dark" aria-labelledby="masterDropdownOffcanvas">
+                        <li><a class="dropdown-item active" href="employee-master.html">Employee Master</a></li>
+                        <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
+                        <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                        <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tour-management.html">Tour Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="daily-visit.html">Visit</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="expenses.html">Expenses</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <nav class="bg-white border-bottom navbar-top-lg">
         <ul class="nav nav-tabs container-fluid px-0" id="dashboardTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="dashboard.html" type="button">Dashboard</a>
@@ -262,21 +395,19 @@
                     Master
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="masterDropdown">
-                    <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
+                    <li><a class="dropdown-item active" href="employee-master.html">Employee Master</a></li>
                     <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
                     <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
                     <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
-                    
-                    
                 </ul>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="tour-management.html" type="button">Tour Management</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" href="daily-visit.html" type="button">Visits</a>
+                <a class="nav-link" href="daily-visit.html" type="button">Visit</a>
             </li>
-            
+
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="expenses.html" type="button">Expenses</a>
             </li>
@@ -291,8 +422,8 @@
                     <input type="text" class="form-control" id="filterEmployeeId" placeholder="Employee ID">
                 </div>
                 <div class="col-md-3 col-sm-6">
-                    <label for="filterName" class="form-label visually-hidden">Name</label>
-                    <input type="text" class="form-control" id="filterName" placeholder="Name">
+                    <label for="filterEmployeeName" class="form-label visually-hidden">Employee Name</label>
+                    <input type="text" class="form-control" id="filterEmployeeName" placeholder="Employee Name">
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <label for="filterPosition" class="form-label visually-hidden">Position</label>
@@ -336,94 +467,64 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td>Alice Johnson</td>
+                        <td>101</td>
+                        <td>Alice Smith</td>
                         <td>Manager</td>
                         <td>Sales</td>
                     </tr>
                     <tr>
-                        <td>2</td>
-                        <td>Bob Williams</td>
-                        <td>Developer</td>
-                        <td>IT</td>
+                        <td>102</td>
+                        <td>Bob Johnson</td>
+                        <td>Engineer</td>
+                        <td>Engineering</td>
                     </tr>
                     <tr>
-                        <td>3</td>
+                        <td>103</td>
                         <td>Charlie Brown</td>
+                        <td>Analyst</td>
+                        <td>Marketing</td>
+                    </tr>
+                    <tr>
+                        <td>104</td>
+                        <td>Diana Prince</td>
+                        <td>Designer</td>
+                        <td>Creative</td>
+                    </tr>
+                    <tr>
+                        <td>105</td>
+                        <td>Eve Adams</td>
                         <td>HR Specialist</td>
                         <td>Human Resources</td>
                     </tr>
                     <tr>
-                        <td>4</td>
-                        <td>Diana Prince</td>
-                        <td>Marketing Lead</td>
-                        <td>Marketing</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Eve Adams</td>
-                        <td>Project Coordinator</td>
-                        <td>Operations</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
+                        <td>106</td>
                         <td>Frank White</td>
-                        <td>Sales Representative</td>
-                        <td>Sales</td>
+                        <td>Developer</td>
+                        <td>Engineering</td>
                     </tr>
                     <tr>
-                        <td>7</td>
-                        <td>Grace Lee</td>
-                        <td>Software Engineer</td>
-                        <td>IT</td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td>Henry Green</td>
-                        <td>Recruiter</td>
-                        <td>Human Resources</td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>Ivy King</td>
-                        <td>Graphic Designer</td>
-                        <td>Marketing</td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td>Jack Nelson</td>
-                        <td>Operations Manager</td>
+                        <td>107</td>
+                        <td>Grace Hall</td>
+                        <td>Coordinator</td>
                         <td>Operations</td>
                     </tr>
                     <tr>
-                        <td>11</td>
-                        <td>Karen Hall</td>
-                        <td>Financial Analyst</td>
+                        <td>108</td>
+                        <td>Henry King</td>
+                        <td>Accountant</td>
                         <td>Finance</td>
                     </tr>
                     <tr>
-                        <td>12</td>
-                        <td>Liam Scott</td>
-                        <td>Data Scientist</td>
-                        <td>IT</td>
+                        <td>109</td>
+                        <td>Ivy Lane</td>
+                        <td>QA Tester</td>
+                        <td>Engineering</td>
                     </tr>
                     <tr>
-                        <td>13</td>
-                        <td>Mia Davis</td>
+                        <td>110</td>
+                        <td>Jack Green</td>
                         <td>Customer Support</td>
-                        <td>Customer Service</td>
-                    </tr>
-                    <tr>
-                        <td>14</td>
-                        <td>Noah Clark</td>
-                        <td>Product Manager</td>
-                        <td>Product Development</td>
-                    </tr>
-                    <tr>
-                        <td>15</td>
-                        <td>Olivia Rodriguez</td>
-                        <td>Legal Counsel</td>
-                        <td>Legal</td>
+                        <td>Services</td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -450,7 +551,7 @@
                 <div class="modal-body">
                     <form id="employeeForm">
                         <div class="mb-3">
-                            <label for="employeeName" class="form-label">Name</label>
+                            <label for="employeeName" class="form-label">Employee Name</label>
                             <input type="text" class="form-control" id="employeeName" required>
                         </div>
                         <div class="mb-3">
@@ -473,13 +574,14 @@
     </div>
 
     <footer class="footer container-fluid px-2">
-        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software Solutions</a>. All rights
+        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software
+                Solutions</a>. All rights
             reserved.</div>
         <div class="control-buttons">
             <a href="dashboard.html" title="Home" aria-label="Home">
                 <button type="button" class="btn btn-primary btn-round">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house"
-                        viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-house" viewBox="0 0 16 16">
                         <path
                             d="M8 3.293l6 6V13.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V10H6v3.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V9.293l6-6z" />
                         <path fill-rule="evenodd"
@@ -499,7 +601,6 @@
         </div>
     </footer>
 
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -507,7 +608,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const filterEmployeeIdInput = document.getElementById('filterEmployeeId');
-            const filterNameInput = document.getElementById('filterName');
+            const filterEmployeeNameInput = document.getElementById('filterEmployeeName');
             const filterPositionInput = document.getElementById('filterPosition');
             const filterDepartmentInput = document.getElementById('filterDepartment');
             const employeeTableBody = document.querySelector('#employeeTable tbody');
@@ -650,20 +751,23 @@
             // Function to apply filters
             function applyFilters() {
                 const employeeIdFilter = filterEmployeeIdInput.value.toLowerCase();
-                const nameFilter = filterNameInput.value.toLowerCase();
+                const employeeNameFilter = filterEmployeeNameInput.value.toLowerCase();
                 const positionFilter = filterPositionInput.value.toLowerCase();
                 const departmentFilter = filterDepartmentInput.value.toLowerCase();
 
+
                 filteredRows = allTableRows.filter(row => {
                     const employeeId = row.cells[0].textContent.toLowerCase();
-                    const name = row.cells[1].textContent.toLowerCase();
+                    const employeeName = row.cells[1].textContent.toLowerCase();
                     const position = row.cells[2].textContent.toLowerCase();
                     const department = row.cells[3].textContent.toLowerCase();
 
+
                     const idMatch = employeeId.includes(employeeIdFilter);
-                    const nameMatch = name.includes(nameFilter);
+                    const nameMatch = employeeName.includes(employeeNameFilter);
                     const positionMatch = position.includes(positionFilter);
                     const departmentMatch = department.includes(departmentFilter);
+
 
                     return idMatch && nameMatch && positionMatch && departmentMatch;
                 });
@@ -700,7 +804,7 @@
 
                 const headers = Array.from(employeeTable.querySelectorAll('thead th')).map(th => th.textContent);
                 // Use filteredRows for export
-                const data = filteredRows.map(row => Array.from(row.cells).map(cell => cell.textContent)); // Corrected data mapping
+                const data = filteredRows.map(row => Array.from(row.cells).map(cell => cell.textContent));
 
                 doc.autoTable({
                     head: [headers],
@@ -819,9 +923,10 @@
 
             // Event Listeners for filter inputs (triggering applyFilters on 'input' event)
             filterEmployeeIdInput.addEventListener('input', applyFilters);
-            filterNameInput.addEventListener('input', applyFilters);
+            filterEmployeeNameInput.addEventListener('input', applyFilters);
             filterPositionInput.addEventListener('input', applyFilters);
             filterDepartmentInput.addEventListener('input', applyFilters);
+
 
             // Event Listeners for export buttons
             exportExcelBtn.addEventListener('click', exportToExcel);

@@ -7,7 +7,7 @@
     <title>Group Master</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         html,
@@ -26,7 +26,7 @@
             flex: 1 0 auto;
         }
 
-        /* Tab content */
+        /* Tab content - largely for larger screens now */
         .tab-content {
             background: #fff;
             border: 1px solid #dee2e6;
@@ -40,10 +40,8 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            /* Added border-radius for the whole table */
             border-radius: 0.375rem;
             overflow: hidden;
-            /* Ensures inner content respects border-radius */
             border: 1px solid #dee2e6;
         }
 
@@ -80,7 +78,6 @@
             border-top-right-radius: 0.375rem;
         }
 
-
         table.data-table tbody tr:nth-child(even) {
             background-color: #f8f9fa;
         }
@@ -107,16 +104,12 @@
         /* Pagination row in table footer */
         table.data-table tfoot tr.pagination-row td {
             background-color: white;
-            /* Light background for pagination row */
             border-top: 1px solid #dee2e6;
             padding: 0.75rem;
             text-align: right;
-            /* Align pagination to right */
-            /* Bottom corners for the table footer */
             border-bottom-left-radius: 0.375rem;
             border-bottom-right-radius: 0.375rem;
         }
-
 
         /* Bottom footer */
         footer.footer {
@@ -133,7 +126,6 @@
             z-index: 10;
             width: 100%;
             margin-top: auto;
-            /* Pushes footer to the bottom */
         }
 
         footer.footer a {
@@ -211,15 +203,12 @@
             border-radius: 0.375rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            /* Space below the filter card */
         }
 
         /* Pagination styling within the table footer */
         .pagination-in-table {
             display: inline-flex;
-            /* Use inline-flex for horizontal alignment of pagination items */
             margin-bottom: 0;
-            /* Remove default ul margin */
         }
 
         .pagination-in-table .page-link {
@@ -227,9 +216,7 @@
             border: 1px solid #dee2e6;
             border-radius: 0.25rem;
             margin: 0 2px;
-            /* Spacing between buttons */
             padding: 0.375rem 0.75rem;
-            /* Bootstrap default padding */
         }
 
         .pagination-in-table .page-item.active .page-link {
@@ -247,11 +234,157 @@
             background-color: #e0f2fe;
             border-bottom: 1px solid #bfdbfe;
         }
+
+        /* Custom styles for sidebar */
+        /* Hide regular nav on small screens */
+        .navbar-top-lg {
+            display: none;
+        }
+
+        /* Show regular nav on large screens */
+        @media (min-width: 992px) {
+            .navbar-top-lg {
+                display: block;
+            }
+
+            .sidebar-toggle-btn {
+                display: none !important;
+            }
+        }
+
+        /* Offcanvas Specific Overrides */
+        /* Set background of offcanvas to black shade */
+        .offcanvas.bg-dark {
+            background-color: #212529 !important;
+            /* A slightly lighter black than pure #000 */
+        }
+
+        /* Set header background for offcanvas */
+        .offcanvas-header {
+            background-color: #343a40 !important;
+            /* A slightly lighter shade for the header */
+            border-bottom: 1px solid #495057;
+            color: white;
+            /* Ensure text is visible */
+        }
+
+        .offcanvas-title {
+            color: white;
+        }
+
+        .offcanvas-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+            /* Make close button white */
+        }
+
+        /* Set text color for nav links in offcanvas */
+        .offcanvas-body .nav-link {
+            padding: 0.75rem 1rem;
+            color: #f8f9fa;
+            /* Light gray for text */
+            font-weight: 500;
+            border-radius: 0.375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Hover and active states for offcanvas nav links */
+        .offcanvas-body .nav-link:hover,
+        .offcanvas-body .nav-link.active {
+            background-color: #343a40;
+            /* Bootstrap primary blue */
+            color: white;
+        }
+
+        /* Dropdown specific styles within offcanvas */
+        .offcanvas-body .dropdown-item {
+            padding-left: 1.5rem;
+            color: #f8f9fa;
+            /* Light text for dropdown items */
+            background-color: transparent;
+            /* Ensure transparent background initially */
+        }
+
+        .offcanvas-body .dropdown-menu {
+            background-color: #2c3034;
+            /* Slightly lighter dark for dropdown menu */
+            border: none;
+            box-shadow: none;
+        }
+
+        .offcanvas-body .dropdown-item:hover,
+        .offcanvas-body .dropdown-item.active {
+            background-color: #343a40;
+            /* Darker blue for hover/active */
+            color: white;
+        }
+
+        /* Sidebar width for small screens */
+        @media (max-width: 767.98px) {
+            /* Adjust this breakpoint if needed for 'sm' screens */
+            .offcanvas-start {
+                --bs-offcanvas-width: 80vw;
+                /* Covers half of the viewport width */
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            /* For medium screens, adjust as desired */
+            .offcanvas-start {
+                --bs-offcanvas-width: 40vw;
+                /* Can be adjusted for medium screens */
+            }
+        }
     </style>
 </head>
 
 <body>
-    <nav class="bg-white border-bottom">
+    <nav class="navbar bg-white border-bottom d-lg-none py-2 px-3" style="padding-left: 0px !important;">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-primary sidebar-toggle-btn me-3" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation" style="background-color: #e0f2fe; border-color: #e0f2fe; color: black">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand mb-0 h1 flex-grow-1" href="#" style="text-align: center;">Group Master</a>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasNavbar"
+        aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Navigation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" id="masterDropdownOffcanvas" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Master
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-sm bg-dark" aria-labelledby="masterDropdownOffcanvas">
+                        <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
+                        <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
+                        <li><a class="dropdown-item active" href="group-master.html">Group Master</a></li>
+                        <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tour-management.html">Tour Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="daily-visit.html">Visit</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="expenses.html">Expenses</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <nav class="bg-white border-bottom navbar-top-lg">
         <ul class="nav nav-tabs container-fluid px-0" id="dashboardTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="dashboard.html" type="button">Dashboard</a>
@@ -264,19 +397,17 @@
                 <ul class="dropdown-menu" aria-labelledby="masterDropdown">
                     <li><a class="dropdown-item" href="employee-master.html">Employee Master</a></li>
                     <li><a class="dropdown-item" href="branch-master.html">Branch Master</a></li>
-                     <li><a class="dropdown-item" href="group-master.html">Group Master</a></li>
+                    <li><a class="dropdown-item active" href="group-master.html">Group Master</a></li>
                     <li><a class="dropdown-item" href="transport-master.html">Transport Master</a></li>
-                   
-                    
                 </ul>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="tour-management.html" type="button">Tour Management</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link" href="daily-visit.html" type="button">Visits</a>
+                <a class="nav-link" href="daily-visit.html" type="button">Visit</a>
             </li>
-            
+
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="expenses.html" type="button">Expenses</a>
             </li>
@@ -296,7 +427,8 @@
                 </div>
                 <div class="col-md-4 col-sm-6">
                     <label for="filterGroupDescription" class="form-label visually-hidden">Group Description</label>
-                    <input type="text" class="form-control" id="filterGroupDescription" placeholder="Group Description">
+                    <input type="text" class="form-control" id="filterGroupDescription"
+                        placeholder="Group Description">
                 </div>
             </div>
         </div>
@@ -333,52 +465,52 @@
                     <tr>
                         <td>G001</td>
                         <td>Sales Team A</td>
-                        <td>Handles major client accounts</td>
+                        <td>Handles major corporate accounts.</td>
                     </tr>
                     <tr>
                         <td>G002</td>
-                        <td>Marketing Team</td>
-                        <td>Responsible for campaigns and branding</td>
+                        <td>Marketing Innovations</td>
+                        <td>Focuses on new campaign strategies.</td>
                     </tr>
                     <tr>
                         <td>G003</td>
-                        <td>Development Squad</td>
-                        <td>Focuses on software development</td>
+                        <td>Product Development Squad</td>
+                        <td>Responsible for new software features.</td>
                     </tr>
                     <tr>
                         <td>G004</td>
-                        <td>HR Department</td>
-                        <td>Manages human resources and recruitment</td>
+                        <td>Customer Success Team</td>
+                        <td>Ensures client satisfaction and retention.</td>
                     </tr>
                     <tr>
                         <td>G005</td>
-                        <td>Customer Support</td>
-                        <td>Provides assistance to customers</td>
+                        <td>Finance & Accounting</td>
+                        <td>Manages all financial operations.</td>
                     </tr>
                     <tr>
                         <td>G006</td>
-                        <td>Finance Team</td>
-                        <td>Manages company finances and payroll</td>
+                        <td>HR Operations</td>
+                        <td>Deals with employee relations and hiring.</td>
                     </tr>
                     <tr>
                         <td>G007</td>
-                        <td>Operations Team</td>
-                        <td>Oversees daily business operations</td>
+                        <td>IT Support Desk</td>
+                        <td>Provides technical assistance to staff.</td>
                     </tr>
                     <tr>
                         <td>G008</td>
-                        <td>Research & Development</td>
-                        <td>Innovates new products and services</td>
+                        <td>Logistics & Supply Chain</td>
+                        <td>Manages inventory and shipping.</td>
                     </tr>
                     <tr>
                         <td>G009</td>
-                        <td>Logistics Unit</td>
-                        <td>Handles supply chain and delivery</td>
+                        <td>Research & Development</td>
+                        <td>Explores new technologies and solutions.</td>
                     </tr>
                     <tr>
                         <td>G010</td>
-                        <td>Quality Assurance</td>
-                        <td>Ensures product and service quality</td>
+                        <td>Quality Assurance Unit</td>
+                        <td>Ensures product quality and testing.</td>
                     </tr>
                 </tbody>
                 <tfoot>
@@ -424,13 +556,14 @@
     </div>
 
     <footer class="footer container-fluid px-2">
-        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software Solutions</a>. All rights
+        <div>© 2025 <a href="#" target="_blank" rel="noopener noreferrer">Doritech Consultancy & Software
+                Solutions</a>. All rights
             reserved.</div>
         <div class="control-buttons">
             <a href="dashboard.html" title="Home" aria-label="Home">
                 <button type="button" class="btn btn-primary btn-round">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house"
-                        viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        class="bi bi-house" viewBox="0 0 16 16">
                         <path
                             d="M8 3.293l6 6V13.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V10H6v3.5a.5.5 0 0 1-.5.5H2.5a.5.5 0 0 1-.5-.5V9.293l6-6z" />
                         <path fill-rule="evenodd"
@@ -602,14 +735,17 @@
                 const groupNameFilter = filterGroupNameInput.value.toLowerCase();
                 const groupDescriptionFilter = filterGroupDescriptionInput.value.toLowerCase();
 
+
                 filteredRows = allTableRows.filter(row => {
                     const groupId = row.cells[0].textContent.toLowerCase();
                     const groupName = row.cells[1].textContent.toLowerCase();
                     const groupDescription = row.cells[2].textContent.toLowerCase();
 
+
                     const idMatch = groupId.includes(groupIdFilter);
                     const nameMatch = groupName.includes(groupNameFilter);
                     const descriptionMatch = groupDescription.includes(groupDescriptionFilter);
+
 
                     return idMatch && nameMatch && descriptionMatch;
                 });
@@ -707,17 +843,10 @@
                     console.log('Adding New Group:', { name, description });
                     // In a real application, send add request to server
                     // For demo, create a new row (assign a temporary ID)
-                    const newId = allTableRows.length > 0 ? (Math.max(...allTableRows.map(row => {
-                        const currentId = row.cells[0].textContent;
-                        // Extract number from ID like 'G001'
-                        const num = parseInt(currentId.replace('G', ''));
-                        return isNaN(num) ? 0 : num; // Handle non-numeric parts or invalid IDs
-                    })) + 1) : 1;
-                    const formattedNewId = 'G' + String(newId).padStart(3, '0'); // Format as G001, G002 etc.
-
+                    const newId = allTableRows.length > 0 ? (Math.max(...allTableRows.map(row => parseInt(row.cells[0].textContent.replace('G','')))) + 1) : 1;
                     const newRow = document.createElement('tr');
                     newRow.innerHTML = `
-                        <td>${formattedNewId}</td>
+                        <td>G${newId.toString().padStart(3, '0')}</td>
                         <td>${name}</td>
                         <td>${description}</td>
                     `;
@@ -767,6 +896,7 @@
             filterGroupIdInput.addEventListener('input', applyFilters);
             filterGroupNameInput.addEventListener('input', applyFilters);
             filterGroupDescriptionInput.addEventListener('input', applyFilters);
+
 
             // Event Listeners for export buttons
             exportExcelBtn.addEventListener('click', exportToExcel);
